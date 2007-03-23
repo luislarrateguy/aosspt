@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+	CANT_VECES_COMPILAR=3
+else
+	CANT_VECES_COMPILAR=$1
+fi
+
+if [ $CANT_VECES_COMPILAR -lt 1 ]; then
+	echo Se debe pasar un parámetro numérico mayor a 0
+	exit 1
+fi
+
+cd ..
+./makediffs
+cd doc
+while [ $CANT_VECES_COMPILAR -gt 0 ]; do
+	if (pdflatex main); then
+		CANT_VECES_COMPILAR=`expr $CANT_VECES_COMPILAR - 1`
+	else
+		break;
+	fi
+done

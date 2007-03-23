@@ -1,0 +1,14 @@
+#!/bin/sh
+
+borrar()
+{
+  rm -f *.aux *.toc *.log *.out *.lof
+}
+
+rm -rf main.pdf
+
+borrar
+cd principal
+borrar
+cd ../descargos
+borrar
