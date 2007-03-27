@@ -4,3 +4,6 @@ all:
 
 clean:
 	rm ../obj/rphone ../obj/rphoned
+
+copy:
+	cp ../* /home/soa/2007/tp1/SEIS/ -R
