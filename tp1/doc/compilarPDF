@@ -13,7 +13,7 @@ if [ $CANT_VECES_COMPILAR -lt 1 ]; then
 	exit 1
 fi
 
-./makediffs
+#./makediffs
 while [ $CANT_VECES_COMPILAR -gt 0 ]; do
 	if (pdflatex $LATEX_OPTIONS main); then
 		CANT_VECES_COMPILAR=`expr $CANT_VECES_COMPILAR - 1`
