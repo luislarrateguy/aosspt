@@ -22,8 +22,8 @@ void buscarRespuesta(char *,char *);
 
 int main(int argc, char *argv[]) {
 	int socket_fd, socket_nuevo_fd, tam_dir_cliente;		/* socket que escucha peticiones, socket para procesar request, tam. est direccion */
-	char *request;											/* buffer de lectura */
-	char *response;											/* buffer de escritura */
+	char *request = malloc(256);							/* buffer de lectura */
+	char *response = malloc(256);							/* buffer de escritura */
 	struct sockaddr_in dir_servidor, dir_cliente;			/*  */
 	int n,cant;												/* cant=Cantidad de datos recibidos. */
 	struct sigaction sa;									/* Utilizado para manejar las senyales al proceso */
@@ -32,6 +32,9 @@ int main(int argc, char *argv[]) {
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
 	if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+		free(response);
+		free(request);
+		close(socket_fd);
 		perror("sigaction");
 		exit(1);
 	}
@@ -75,6 +78,9 @@ int main(int argc, char *argv[]) {
 		}
 		close(socket_nuevo_fd);  						/* Cierro el descriptor en el padre del FORK */
 	}
+	free(response);
+	free(request);
+	return 0;
 }
 
 void buscarRespuesta(char *request,char *response) {

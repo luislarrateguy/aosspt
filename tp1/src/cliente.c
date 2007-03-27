@@ -21,7 +21,8 @@ int main(int argc, char *argv[]) {
 	int sockfd, portno, n, cant;
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
-	char *buffer,*envbuffer;
+	char *buffer   = malloc(256);
+	char *envbuffer= malloc(256);
 	if (argc < 3) {
 		fprintf(stderr,"Se usa: %s <HOSTIP> <BUSQUEDA>\n", argv[0]);
 		exit(0);
@@ -46,6 +47,8 @@ int main(int argc, char *argv[]) {
 	leer(sockfd,buffer,&cant);
 	printf("%s\n",buffer);
 	close(sockfd);
+	free(buffer);
+	free(envbuffer);
 	return 0;
 }
 

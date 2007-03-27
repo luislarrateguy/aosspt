@@ -7,7 +7,7 @@
 
 int abrirSocket() {
 	int fd;
-	fd = socket(AF_INET, SOCK_STREAM, 0);
+	fd = socket(PF_INET, SOCK_STREAM, 0);
 	if (fd < 0) {
 		error("ERROR al abrir el Socket");
 		exit(1);
@@ -57,7 +57,7 @@ void enviar(int fd, char *datos) {
 		perror("send");
 }
 void leer(int fd, char *datos, int *cant) {
-	if ((*cant=recv(fd, datos, TAMMAXDATO-1, 0)) == -1) {
+	if ((*cant=recv(fd, datos, TAMMAXDATO, 0)) == -1) {
 		perror("recv");
 		exit(1);
 	}
