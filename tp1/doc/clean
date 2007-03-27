@@ -12,3 +12,5 @@ cd principal
 borrar
 cd ../descargos
 borrar
+cd ../licencia
+borrar
