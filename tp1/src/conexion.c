@@ -53,7 +53,7 @@ void error(char *msg) {
 }
 void enviar(int fd, char *datos) {
 //	if (send(fd, *response, sizeof(*response), 0) == -1)
-	if (send(fd, datos, strlen(datos)-1, 0) == -1)
+	if (send(fd, datos, strlen(datos), 0) == -1)
 		perror("send");
 }
 void leer(int fd, char *datos, int *cant) {
