@@ -10,37 +10,76 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "conexion.c"
 
-/*void error(char *msg) {
-	perror(msg);
-	exit(1);
-}*/
+#define PORT 2222
+#define TAMMAXDATO 256
 
 int main(int argc, char *argv[]) {
-	int socket_fd, socket_nuevo_fd, nro_puerto, tam_dir_cliente;
-	char buffer[256];
+	int socket_fd, socket_nuevo_fd, tam_dir_cliente;
+	char buffer[TAMMAXDATO];
+	char response[TAMMAXDATO];
 	struct sockaddr_in dir_servidor, dir_cliente;
-	int n;
+	int n,cant;
 
-	if (argc < 2) {
-		fprintf(stderr,"ERROR, no port provided\n");
+	socket_fd = abrirSocket();
+		printf("Iniciando servidor...\n", inet_ntoa(dir_servidor.sin_addr)); 
+	inicializarDireccion(&dir_servidor,INADDR_ANY,PORT);
+		printf("Binding...\n"); 
+	conectar(socket_fd,&dir_servidor);
+		printf("Conectado.\n"); 
+	escuchar(socket_fd);
+		printf("Escuchando en IP: %s Puerto: 2222\n", inet_ntoa(dir_servidor.sin_addr)); 
+	
+	/*
+	sa.sa_handler = sigchld_handler; // reap all dead processes
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_RESTART;
+	if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+		perror("sigaction");
 		exit(1);
 	}
+	*/
 
-	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	while(1) {  // Bucle infinito. Se corta con senyales.
+		int err = aceptarRequest(socket_fd, &socket_nuevo_fd, &dir_cliente);
+		if (err)
+			continue;
+		
+		if (!fork()) { // Este es el hijo.
+			close(socket_fd); // ciero el primer Listener, el del padre porque no lo necesito.
+				printf("Aceptando request de IP: %s Puerto: %d\n", inet_ntoa(dir_cliente.sin_addr),ntohs(dir_cliente.sin_port)); 
+			
+			/*Aca deberia leer los datos del cliente*/
+			if ((cant=recv(socket_nuevo_fd, buffer, TAMMAXDATO-1, 0)) == -1) {
+				perror("recv");
+				exit(1);
+			}
+			/*MILTON's code.
+			Yo cambie el read por el recv porque es no bloqueante. Una pavada. 
+			n = read(socket_nuevo_fd,buffer,255);
+			if (n < 0) error("ERROR reading from socket");
+			*/
+			buffer[cant] = '\0';
+			
+			/*Luego buscar en el archivo con lo que esta haciendo Cesar */
 
-	if (socket_fd < 0) 
-		error("ERROR opening socket");
+			/* Mostrar en pantalla en el formato que pide el TP */
+			printf("El cliente dice: %s\n",buffer);
 
-	bzero((char *) &dir_servidor, sizeof(dir_servidor));
-	nro_puerto = atoi(argv[1]);
-	dir_servidor.sin_family = AF_INET;
-	dir_servidor.sin_addr.s_addr = INADDR_ANY;
-	dir_servidor.sin_port = htons(nro_puerto);
-
-	if (bind(socket_fd, (struct sockaddr *) &dir_servidor,
-			sizeof(dir_servidor)) < 0) 
-		error("ERROR on binding");
+			if (send(socket_nuevo_fd, "Te digo Pong! en respuesta a:\n", 29, 0) == -1)
+				perror("send");
+			if (send(socket_nuevo_fd, buffer, cant, 0) == -1)
+				perror("send");
+			close(socket_nuevo_fd);
+			exit(0);
+		}
+		close(socket_nuevo_fd);  // Cierro el descriptor en el padre del FORK
+	}
+	
+	
+	/*
+	MILTON's code.
 
 	listen(socket_fd,5);
 	tam_dir_cliente = sizeof(dir_cliente);
@@ -52,12 +91,11 @@ int main(int argc, char *argv[]) {
 		error("ERROR on accept");
 
 	bzero(buffer,256);
-	n = read(socket_nuevo_fd,buffer,255);
-	if (n < 0) error("ERROR reading from socket");
+
 	printf("Here is the message: %s\n",buffer);
 	n = write(socket_nuevo_fd,"I got your message",18);
 	if (n < 0) error("ERROR writing to socket");
 
 	return 0; 
+	*/
 }
-

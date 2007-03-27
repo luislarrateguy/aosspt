@@ -1,6 +1,6 @@
 all:
-	gcc -o rphone servidor.c
-	gcc -o rphoned cliente.c
+	gcc -o ../obj/rphoned servidor.c
+	gcc -o ../obj/rphone cliente.c
 
 clean:
-	rm servidor cliente
+	rm ../obj/rphone ../obj/rphoned
