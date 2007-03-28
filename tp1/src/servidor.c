@@ -44,7 +44,9 @@ int main(int argc, char** argv) {
 
 		read(sa, buffer, TAM_BUFFER);
 
-		/* TODO: Código para buscar el número telefónico */
+		/* TODO: Código para buscar el número telefónico. Los datos
+		 * enviados por el clietne se encuentran en la variable
+		 * 'buffer' */
 
 		printf("Se recibió del cliente: '%s'\n", buffer);
 		write(sa, buffer, TAM_BUFFER);

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ARCHIVOS=$(find . -name "*.tex")
+ARCHIVOS=$(find . -name "*.tex" | grep -v ".c.tex" | grep -v ".h.tex")
 
 for file in $ARCHIVOS; do
 	aspell --mode=tex --extra-dicts=./dict-tp-soa check ${file};

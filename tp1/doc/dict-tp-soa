@@ -17,3 +17,12 @@ true
 pdfauthor
 pdftitle
 pdftex
+setsockopt
+socket
+REUSEADDR
+bind
+PF
+INET
+INADDR
+ANY
+TAM

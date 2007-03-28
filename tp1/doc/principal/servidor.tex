@@ -1,3 +1,36 @@
 \subsection{El servidor}
 
 \lgrindfile{src_tex/servidor.c.tex}{Archivo \archivo{servidor.c}}
+
+% CÓDIGO DE COMUNICACIONES
+\subsubsection{Código de comunicaciones}
+
+En la línea 29, donde se llama a \metodo{setsockopt}, vale la pena una
+aclaración. El método, como dice el comentario, sirve para setear algunas
+opciones al socket. La que se setea allí es \variable{SO\_REUSEADDR}. En la
+sección 7 del manual para \emph{socket} leemos:
+
+\begin{quote}
+
+\textbf{SO\_REUSEADDR}\linebreak
+Indica que las reglas usadas para validar las direcciones proporcionadas en una
+llamada bind(2) deben permitir la reutilización  de  las direcciones  locales.
+Para  los conectores PF\_INET esto significa que un conector se puede enlazar a
+una dirección, excepto cuando hay un conector activo escuchando asociado a la
+dirección. Cuando el conector que está escuchando está asociado a INADDR\_ANY
+con un puerto específico, entonces no es posible realizar enlaces a este puerto
+para ninguna dirección local.
+
+\end{quote}
+
+También vale otra aclaración al observar la línea 34. El servidor almacena en
+una cola las solicitudes que llegan cuando éste no está disponible para
+atenderlas (o sea, cuando esta trabajando en otra solicitud). La constante
+\variable{TAM\_COLA}, que esta definida en el archivo \archivo{datos.h}, es la
+que indica el tamaño de la cola, que es 10.
+
+% CODIGO DE LECTURA DE LA GUIA
+\subsubsection{Código de lectura de la guía}
+
+\TODO{Falta completar esta sección (sólo si hace falta comentar el código encargado
+de la lectura de la guía). Encargado: César}
