@@ -17,9 +17,15 @@ int main(int argc, char** argv) {
 	canal.sin_addr.s_addr = htonl(INADDR_ANY);
 	canal.sin_port = htons(PUERTO_SERVIDOR);
 	
-	/* Apertura pasiva. Espera una conexión. */
 	s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (s < 0) fatal("No se pudo crear el socket");
+
+	/* Manipulamos algunas opciones del socket:
+	 *  - SOL_SOCKET especifica el nivel de las opciones que queremos
+	 *    modificar.
+	 *  - SO_REUSEADDR es la opción que vamos a modificar.
+	 *  - Los siguientes argumentos activan dicha opción.
+	 */ 
 	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char*) &on, sizeof(on));
 
 	b = bind(s, (struct sockaddr*) &canal, sizeof(canal));
@@ -30,7 +36,9 @@ int main(int argc, char** argv) {
 
 	/* Esperamos una conexión y la atendemos. */
 	while (1) {
-		/* Nos bloqueamos para atender la solicitud. */
+		/* Nos bloqueamos para atender la solicitud. Si llega
+		 * una nueva solicitud mientras procesamos esta, la
+		 * misma se guardará en una cola. */
 		sa = accept(s, 0, 0);
 		if (sa < 0) fatal("Error al ejecutar accept");
 

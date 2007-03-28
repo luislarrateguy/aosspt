@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# Prepara los archivos fuentes (tanto los nuevos como los modificados) en un
+# formato apto para incluirlos en un documentos Latex.
+
+# Indica el destino de los archivos procesados
+DESTINO=./src_tex
+
+# Directorio donde se encuentras los archivos fuentes
+DIR_SRC=../src
+LEN_DIR_SRC=`expr ${#DIR_SRC} + 2`
+
+# Para modificaciones: Crea los diffs y los procesa con lgrind (crea los .tex)
+diffs_texs()
+{
+	for aux in $ARCHIVOS; do
+		file=`expr substr $aux $LEN_DIR_SRC 1000`
+
+		# Continuamos sólo si existe un archivo original
+		if [ -f ${DIR_SRC}/${file}.orig ]; then
+			echo Procesando archivo ${file};
+			diff -u ${DIR_SRC}/${file}.orig ${DIR_SRC}/${file} > ${DESTINO}/${file}.diff;
+			lgrind -t 8 -i -lsrc ${DESTINO}/${file}.diff > ${DESTINO}/${file}.diff.tex;
+			rm ${DESTINO}/${file}.diff;
+
+			comunes ${DESTINO}/${file}.diff.tex
+		fi
+	done
+}
+
+# Para archivos nuevos: Procesa los archivos con lgrind
+texs()
+{
+	for aux in $ARCHIVOS; do
+		file=`expr substr $aux $LEN_DIR_SRC 1000`
+
+		# Si es un directorio no seguimos
+		if [ -d ${DIR_SRC}/$file ]; then
+			continue;
+		fi
+
+		# No procesamos los archivos que tienen un original, ya
+		# esos deben pasarse a la función "diffs_texs"
+		if [ ! -f ${DIR_SRC}/${file}.orig ]; then
+			echo texs - archivo ${file};
+			lgrind -t 8 -i -lsrc ${DIR_SRC}/${file} > ${DESTINO}/${file}.tex;
+
+			comunes ${DESTINO}/${file}.tex
+		fi
+	done
+}
+
+# Tareas finales comunes de las funciones.
+# Se pasa un archivo como argumento.
+comunes()
+{
+	# Convertimos los archivos latin1 a utf8
+	if file ${1} | grep -q "ISO-8859"; then
+		iconv -f latin1 -t utf8 ${1} > ${1}.utf8
+		mv ${1}.utf ${1}
+		echo "   Convertido de ISO-8859 a UTF-8"
+	fi
+}
+
+# dumpe2fs
+ARCHIVOS=$(find $DIR_SRC -name *.c -o -name *.h | grep -v ".svn" | grep -v ".mo" | grep -v ".tex")
+texs
+

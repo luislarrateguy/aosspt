@@ -16,3 +16,5 @@ cd ../licencia
 borrar
 cd ../hechoconsl
 borrar
+
+rm -rf ../src_tex/*

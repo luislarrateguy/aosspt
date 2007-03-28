@@ -38,7 +38,8 @@ int main(int argc, char** argv) {
 
 	memset(&canal, 0, sizeof(canal));
 	canal.sin_family = AF_INET;
-	memcpy(&canal.sin_addr.s_addr, nombreServidor->h_addr, nombreServidor->h_length);
+	memcpy(&canal.sin_addr.s_addr, nombreServidor->h_addr,
+		nombreServidor->h_length);
 	canal.sin_port = htons(PUERTO_SERVIDOR);
 
 	conexion = connect(s, (struct sockaddr*) &canal, sizeof(canal));
