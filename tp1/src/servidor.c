@@ -7,10 +7,63 @@
 
 #include "datos.h"
 
+/* Devuelve 1 si la 'sub' es subcadena de 'cadena',
+   en caso contrario retorna 0 */
+int substring(string sub, string cadena) {
+	int i = 0;
+	int j = 0;
+
+	while (sub[j] != '\0' && cadena[i] != '\0') {
+		if (sub[j] == cadena[i]) {
+			i++;
+			j++;			
+		}
+		else {
+			i++;
+			j = 0;
+		}
+	}
+	
+	if (sub[j] == '\0')
+		return 1;
+	return 0;
+}
+
+/* Retorna la cadena recibida como parametro en
+   mayusculas. Utilizada para hacer las consultas
+   case insensitive */
+/* FIXME: No funciona con letra acentuadas
+   FIXME: En ciertas situaciones aun no identificadas tira
+   fallo de segmentacion, por esta razón aun no se usa. */
+string uppercase (string s) {
+	int i = 0;
+	string resultado;
+
+	while ((s[i] != '\0') && (s[i] != '\n')) {
+		if (s[i] >= 'a' && s[i] <= 'z')
+			resultado[i] = s[i] - ('a'-'A');
+		else
+			resultado[i] = s[i];
+		printf("%c", resultado[i]);
+		i++;
+	}
+	resultado[i] = '\0';
+	
+	return resultado;
+}
+
+
 int main(int argc, char** argv) {
-	int s, b, l, fd, sa, bytes, on = 1;
+	int s, b, l, fd, sa, bytes, on = 1, encontrado;
 	char buffer[TAM_BUFFER];
 	struct sockaddr_in canal;
+	
+	FILE* archivo;
+	string linea = "hola";
+
+	/* Abrimos el archivo guia */
+	if ((archivo = fopen(RUTA_ARCHIVO_GUIA, "r")) == NULL)
+		fatal("No se pudo abrir el archivo guia");
 
 	memset(&canal, 0, sizeof(canal));
 	canal.sin_family = AF_INET;
@@ -43,15 +96,40 @@ int main(int argc, char** argv) {
 		if (sa < 0) fatal("Error al ejecutar accept");
 
 		read(sa, buffer, TAM_BUFFER);
+		
+		encontrado = 0;
+		
+		printf("Se recibió del cliente: '%s'\n", buffer);
 
-		/* TODO: Código para buscar el número telefónico. Los datos
-		 * enviados por el clietne se encuentran en la variable
-		 * 'buffer' */
+		/* Mientras no se termine el archivo, leemos una linea nueva */		
+		while (!feof(archivo))  {
+			/* Leemos la linea */
+			fgets(linea, TAM_LINEA, archivo);
+			
+			/* Si la cadena recibida es subcadena de la linea leida
+			   en el archivo, se la enviamos al cliente */
+			if (substring(buffer, linea)) {
+				encontrado = 1;
+				write(sa, buffer, TAM_BUFFER);
+			}
+			
+		}
+
+		/* Si no encontramos ningun nombre relacionado retornamos
+		   un mensaje de error */
+		if (!encontrado)
+			write(sa, "99999999999;ERROR", TAM_BUFFER);
 
 		printf("Se recibió del cliente: '%s'\n", buffer);
 		write(sa, buffer, TAM_BUFFER);
 
 		close(sa);
+		
+		/* Volvemos a posicionarnos al principio del archivo */
+		rewind(archivo);
 	}
+	
+	/* Cerramos el archivo */
+	if (fclose(archivo) == EOF)
+		printf("Error al cerrar el archivo\n");
 }
-
