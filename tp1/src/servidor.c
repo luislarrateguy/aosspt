@@ -1,94 +1,47 @@
-/*
- * servidor.c
- */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
 #include <string.h>
-#include <sys/types.h> 
+#include <sys/types.h>
+#include <sys/fcntl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include "conexion.c"														/*no se como incluir el .h de conexion.. */
+#include <netdb.h>
 
-#define PORT 2222
-#define DEBUG 1
+#include "datos.h"
 
-void sigchld_handler(int);
-void buscarRespuesta(char *,char *);
+int main(int argc, char** argv) {
+	int s, b, l, fd, sa, bytes, on = 1;
+	char buffer[TAM_BUFFER];
+	struct sockaddr_in canal;
 
-int main(int argc, char *argv[]) {
-	int socket_fd, socket_nuevo_fd, tam_dir_cliente;		/* socket que escucha peticiones, socket para procesar request, tam. est direccion */
-	char *request = malloc(256);							/* buffer de lectura */
-	char *response = malloc(256);							/* buffer de escritura */
-	struct sockaddr_in dir_servidor, dir_cliente;			/*  */
-	int n,cant;												/* cant=Cantidad de datos recibidos. */
-	struct sigaction sa;									/* Utilizado para manejar las senyales al proceso */
-
-	sa.sa_handler = sigchld_handler;						/* handler de senyales */
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	if (sigaction(SIGCHLD, &sa, NULL) == -1) {
-		free(response);
-		free(request);
-		close(socket_fd);
-		perror("sigaction");
-		exit(1);
-	}
+	memset(&canal, 0, sizeof(canal));
+	canal.sin_family = AF_INET;
+	canal.sin_addr.s_addr = htonl(INADDR_ANY);
+	canal.sin_port = htons(PUERTO_SERVIDOR);
 	
-	socket_fd = abrirSocket();								/* Creo un socket para escuchas peticiones */
-		#if DEBUG
-		printf("Iniciando servidor...\n"); 
-		#endif
-	inicializarDireccion(&dir_servidor,INADDR_ANY,PORT);	/* Inicializo la estructura de direccion local */
-		#if DEBUG
-		printf("Binding...\n"); 
-		#endif
-	ligar(socket_fd,&dir_servidor);							/* Hago un bind entre el socket, la direccion y el puerto */
-		#if DEBUG
-		printf("Conectado.\n"); 
-		#endif
-	escuchar(socket_fd);									/* Activo la escucha */
-		printf("Escuchando en IP: %s Puerto: 2222\n", inet_ntoa(dir_servidor.sin_addr)); 
+	/* Apertura pasiva. Espera una conexión. */
+	s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (s < 0) fatal("No se pudo crear el socket");
+	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char*) &on, sizeof(on));
 
+	b = bind(s, (struct sockaddr*) &canal, sizeof(canal));
+	if (b < 0) fatal("Error al ejecutar bind");
 
-	while(1) {  // Bucle infinito. Se corta con senyales.
-		int err = aceptarRequest(socket_fd, &socket_nuevo_fd, &dir_cliente);	/* Creo un socket cuando recibo 
-																				una request, para leer los datos */
-		if (err)
-			continue;
-		
-		if (!fork()) {			/* Este es el hijo. El socket original continua en el padre */
-			close(socket_fd);	/* por lo tanto ciero el primer socket.*/
-				#if DEBUG			
-				printf("Aceptando request de IP: %s Puerto: %d\n", 
-						inet_ntoa(dir_cliente.sin_addr),ntohs(dir_cliente.sin_port)); 
-				#endif
-			leer(socket_nuevo_fd,request, &cant);		/* Lee los datos enviados por el cliente */
-			buscarRespuesta(request,response);			/* Busca una respuesta y arma el resultado en "response" */
-				#if DEBUG
-				printf("El cliente dice: %s\n",request);
-				#endif	
-			enviar(socket_nuevo_fd,response);
-			close(socket_nuevo_fd);
-			exit(0);
-		}
-		close(socket_nuevo_fd);  						/* Cierro el descriptor en el padre del FORK */
+	l = listen(s, TAM_COLA);
+	if (l < 0) fatal("Error al ejecutar listen");
+
+	/* Esperamos una conexión y la atendemos. */
+	while (1) {
+		/* Nos bloqueamos para atender la solicitud. */
+		sa = accept(s, 0, 0);
+		if (sa < 0) fatal("Error al ejecutar accept");
+
+		read(sa, buffer, TAM_BUFFER);
+
+		/* TODO: Código para buscar el número telefónico */
+
+		printf("Se recibió del cliente: '%s'\n", buffer);
+		write(sa, buffer, TAM_BUFFER);
+
+		close(sa);
 	}
-	free(response);
-	free(request);
-	return 0;
 }
 
-void buscarRespuesta(char *request,char *response) {
-	/* ac� se deber�a armar la respuesta del servidor */
-	char *c = strcpy(response,request);
-}
-
-void sigchld_handler(int s)
-{
-	while(waitpid(-1, NULL, WNOHANG) > 0);
-}

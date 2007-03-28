@@ -9,5 +9,5 @@ all: ../obj/rphone ../obj/rphoned
 clean:
 	rm -rf ../obj/rphone ../obj/rphoned
 
-copy:
+copy: all
 	cp ../* /home/soa/2007/tp1/UNO/ -r
