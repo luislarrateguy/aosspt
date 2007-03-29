@@ -10,7 +10,7 @@ all: ${OBJ}
 ../obj/rphone: cliente.c
 	gcc -o ../obj/rphone cliente.c
 
-../obj/rphoned: servidor.c
+../obj/rphoned: servidor.c strings.c
 	gcc -o ../obj/rphoned servidor.c
 
 ${OBJ}: datos.h
@@ -43,9 +43,7 @@ disquette_dir: all doc
 copy: disquette_dir
 	# Creo el arbol de directorios y copio el contenido del disquette
 	mkdir -p /home/soa/2007/tp1/UNO/
-	cp -r ${DISQUETTE_DIR}/* /home/soa/2007/tp1/UNO/
-
-	rm -rf ${DISQUETTE_DIR}
+	cp -r ../* /home/soa/2007/tp1/UNO/
 
 # Crea una imagen de un disquette de 1.44 MB
 imagen_disquette: disquette_dir
