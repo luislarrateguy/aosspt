@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 	struct sockaddr_in canal;
 	
 	FILE* archivo;
-	string linea = "hola";
+	char linea[81];
 
 	/* Abrimos el archivo guia */
 	if ((archivo = fopen(RUTA_ARCHIVO_GUIA, "r")) == NULL)
@@ -106,11 +106,14 @@ int main(int argc, char** argv) {
 			/* Leemos la linea */
 			fgets(linea, TAM_LINEA, archivo);
 			
+			/* Quito el fin de linea ('\n') de la línea leída */
+			linea[strlen(linea) - 1] = '\0';
+			
 			/* Si la cadena recibida es subcadena de la linea leida
 			   en el archivo, se la enviamos al cliente */
 			if (substring(buffer, linea)) {
 				encontrado = 1;
-				write(sa, buffer, TAM_BUFFER);
+				write(sa, linea, TAM_LINEA);
 			}
 			
 		}

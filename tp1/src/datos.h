@@ -5,7 +5,7 @@
 #define TAM_BUFFER 256
 #define TAM_COLA 10
 #define RUTA_ARCHIVO_GUIA "../etc/guia"
-#define TAM_LINEA 80
+#define TAM_LINEA 81
 
 typedef char* string;
 

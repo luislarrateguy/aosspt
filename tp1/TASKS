@@ -1,0 +1,13 @@
+Lista de tareas finalizadas y por completar.
+
+##### TAREAS FINALIZADAS:
+
+[Finalizada el 29 de marzo 01:38 hs]
+- Hay que probar que el comando "make copy" haga una copia de todo el disquette
+  al directorio especificado en el enunciado.
+
+
+##### TAREAS POR COMPLETAR:
+
+- Hay que cambiar el valor de la constante RUTA_ARCHIVO_GUIA, en el archivo
+datos.h, de "../etc/guia" a la ubicación correcta "/etc/guia".
