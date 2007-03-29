@@ -16,4 +16,3 @@ void fatal(string mensaje) {
 	fprintf(stderr, "%s\n", mensaje);
 	exit(1);
 }
-

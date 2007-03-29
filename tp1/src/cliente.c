@@ -50,9 +50,22 @@ int main(int argc, char** argv) {
 	write(s, argv[2], strlen(argv[2]) + 1);
 
 	/* Obtiene los datos y los escribe en la salida estandar. */
-	bytes = read(s, buffer, TAM_BUFFER);
-	printf("Respuesta del servidor: '%s'\n", buffer);
+	printf("Respuesta del servidor:\n");
 
+	bytes = read(s, buffer, TAM_BUFFER);
+
+	if (!(strcmp(buffer, TEL_NO_ENCONTRADO))) {
+		printf("\tNo existen entradas en la guia relacionadas con su busqueda.\n");
+		return 0;
+	}
+		
+	/*while ((strcmp(buffer, FIN_DATOS)) != 0) {*/
+		printf("\t'%s'\n", buffer);
+		
+		/*bytes = read(s, buffer, TAM_BUFFER);
+	}*/
+	
 	return 0;
 }
+
 
