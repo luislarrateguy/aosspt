@@ -7,7 +7,7 @@
 #include "datos.h"
 
 int main(int argc, char** argv) {
-	int conexion, s, bytes;
+	int conexion, s;
 
 	/* El nombre del servidor (no la IP) */
 	struct hostent *nombreServidor;
@@ -52,19 +52,17 @@ int main(int argc, char** argv) {
 	/* Obtiene los datos y los escribe en la salida estandar. */
 	printf("Respuesta del servidor:\n");
 
-	bytes = read(s, buffer, TAM_BUFFER);
-
-	if (!(strcmp(buffer, TEL_NO_ENCONTRADO))) {
-		printf("\tNo existen entradas en la guia relacionadas con su busqueda.\n");
-		return 0;
+	while (read(s, buffer, TAM_BUFFER) != 0) {
+		if (strcmp(buffer, TEL_NO_ENCONTRADO) == 0) {
+			printf("\tNo existen entradas en la guia relacionadas con su busqueda.\n");
+			return 0;
+		}
+		else if (strcmp(buffer, FIN_DATOS) == 0)
+			return 0;
+		else
+			printf("\t'%s'\n", buffer);
 	}
-		
-	/*while ((strcmp(buffer, FIN_DATOS)) != 0) {*/
-		printf("\t'%s'\n", buffer);
-		
-		/*bytes = read(s, buffer, TAM_BUFFER);
-	}*/
-	
+
 	return 0;
 }
 

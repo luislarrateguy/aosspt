@@ -10,7 +10,8 @@
 
 int main(int argc, char** argv) {
 	int s, b, l, fd, sa, bytes, on = 1, encontrado;
-	char buffer[TAM_BUFFER];
+	char nombre_buscado[TAM_BUFFER];
+	char buffer_envio[TAM_BUFFER];
 	struct sockaddr_in canal;
 	
 	FILE* archivo;
@@ -50,9 +51,9 @@ int main(int argc, char** argv) {
 		sa = accept(s, 0, 0);
 		if (sa < 0) fatal("Error al ejecutar accept");
 
-		read(sa, buffer, TAM_BUFFER);
+		read(sa, nombre_buscado, TAM_BUFFER);
 
-		printf("El cliente envia: '%s'\n", buffer);
+		printf("El cliente envia: '%s'\n", nombre_buscado);
 		
 		encontrado = 0;
 		
@@ -66,11 +67,11 @@ int main(int argc, char** argv) {
 			
 			/* Si la cadena recibida es subcadena de la linea leida
 			   en el archivo, se la enviamos al cliente */
-			if (substring(buffer, linea)) {
+			if (substring(nombre_buscado, linea)) {
+				strcpy(buffer_envio, linea);
 				encontrado = 1;
-				write(sa, linea, TAM_LINEA);
+				write(sa, buffer_envio, TAM_BUFFER);
 			}
-			
 		}
 
 		/* Si no encontramos ningun nombre relacionado retornamos
