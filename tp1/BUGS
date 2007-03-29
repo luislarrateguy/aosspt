@@ -1,0 +1,25 @@
+Nota: Al resolverse un bug, mover todo el texto en la sección "BUGS ABIERTOS" a "BUGS
+SOLUCIONADOS", así se sabe que ese bugs esta, supuestamente, arreglado.
+---
+
+##### BUGS ABIERTOS (sin resolver)
+
+[Asignado a: -]
+Según el enunciado el cliente debe preguntar únicamente por el nombre, y no por
+el teléfono. Habría que partir en el ";" la cadena y buscar luego de ella. Por
+ejemplo, si el cliente envía al servidor el string '0', éste le devolverá todas
+los registros, lo cual es incorrecto.
+
+[Asignado a: -]
+Ante la solictud de Peron, debería devolver los 2, Eva y Juan Domingo.
+Actualmente devuelve uno solo.
+
+[Asignado a: -]
+Un pequeño bug, o no se que es, cuando el cliente consulta, el servidor muestra
+2 veces la consulta del tipo:
+" Se recibió del cliente: 'Peron' "
+" Se recibió del cliente: 'Peron' "
+
+
+##### BUGS SOLUCIONADOS
+

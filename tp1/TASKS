@@ -12,15 +12,3 @@ Lista de tareas finalizadas y por completar.
 - Hay que cambiar el valor de la constante RUTA_ARCHIVO_GUIA, en el archivo
 datos.h, de "../etc/guia" a la ubicaciÃ³n correcta "/etc/guia".
 
-- Según el enunciado (y lo que entiendo yo de él), el cliente debe preguntar 
-únicamente por el nombre, y no por el teléfono. Habría que partir en el ";" la cadena
-y buscar luego de ella.
-
-- Ante la solictud de Peron, debería devolver los 2, Eva y Juan Domingo.
-Actualmente devuelve uno solo.
-
-- Un pequeño bug, o no se que es, cuando el cliente consulta, el servidor muestra
-2 veces la consulta del tipo:
-" Se recibió del cliente: 'Peron' "
-" Se recibió del cliente: 'Peron' "
-
