@@ -52,7 +52,8 @@ int main(int argc, char** argv) {
 		 
 		sa = accept(s, (struct sockaddr *) &dir_cliente, &size_sin);
 		if (sa < 0) fatal("Error al ejecutar accept");
-		printf("Recibiendo consulta del cliente (%s) puerto %d\n",inet_ntoa(dir_cliente.sin_addr),ntohs(dir_cliente.sin_port));
+		printf("Recibiendo consulta del cliente (%s) puerto %d\n",
+			inet_ntoa(dir_cliente.sin_addr),ntohs(dir_cliente.sin_port));
 		read(sa, nombre_buscado, TAM_BUFFER);
 
 		printf("El cliente solicita: '%s'\n", nombre_buscado);
@@ -73,7 +74,8 @@ int main(int argc, char** argv) {
 			   en el archivo, se la enviamos al cliente */
 			if (substring(nombre_buscado, getNombre(linea))) {
 				encontrado = encontrado + 1;
-				printf("\tEnviando respuesta %d: '%s'\n", encontrado, buffer_envio);
+				printf("\tEnviando respuesta %d: '%s'\n",
+					encontrado, buffer_envio);
 				write(sa, buffer_envio, TAM_BUFFER);
 			}
 		}
@@ -81,7 +83,8 @@ int main(int argc, char** argv) {
 		/* Si no encontramos ningun nombre relacionado retornamos
 		   un mensaje de error */
 		if (!encontrado) {
-			write(sa, TEL_NO_ENCONTRADO, strlen(TEL_NO_ENCONTRADO) + 1);
+			write(sa, TEL_NO_ENCONTRADO,
+				strlen(TEL_NO_ENCONTRADO) + 1);
 			printf("\tNo se han encontraron coincidencias\n");
 			
 		}

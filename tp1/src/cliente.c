@@ -47,7 +47,8 @@ int main(int argc, char** argv) {
 
 	/* Se ha establecido la conexión. Se envía el nombre de la persona a la cual
 	 * queremos averiguar el teléfono. */
-	printf("Enviando consulta al servidor %s (%s), preguntando por: '%s'\n",argv[1],inet_ntoa(canal.sin_addr),argv[2]);
+	printf("Enviando consulta al servidor %s (%s), preguntando por: '%s'\n",
+		argv[1],inet_ntoa(canal.sin_addr),argv[2]);
 	write(s, argv[2], strlen(argv[2]) + 1);
 
 	/* Obtiene los datos y los escribe en la salida estandar. */
@@ -55,7 +56,7 @@ int main(int argc, char** argv) {
 
 	while (read(s, buffer, TAM_BUFFER) != 0) {
 		if (strcmp(buffer, TEL_NO_ENCONTRADO) == 0) {
-			printf("\tNo existen entradas en la guia relacionadas con su busqueda.\n");
+			printf("\tNo hay entradas que sasfagan la búsqueda.\n");
 			return 0;
 		}
 		else if (strcmp(buffer, FIN_DATOS) == 0)
