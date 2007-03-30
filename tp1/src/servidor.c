@@ -1,4 +1,4 @@
-#include <string.h>
+﻿#include <string.h>
 #include <sys/types.h>
 #include <sys/fcntl.h>
 #include <sys/socket.h>
@@ -10,9 +10,10 @@
 
 int main(int argc, char** argv) {
 	int s, b, l, fd, sa, bytes, on = 1, encontrado;
+	int size_sin = sizeof(struct sockaddr_in);
 	char nombre_buscado[TAM_BUFFER];
 	char buffer_envio[TAM_BUFFER];
-	struct sockaddr_in canal;
+	struct sockaddr_in canal,dir_cliente;
 	
 	FILE* archivo;
 	char linea[81];
@@ -48,9 +49,10 @@ int main(int argc, char** argv) {
 		/* Nos bloqueamos para atender la solicitud. Si llega
 		 * una nueva solicitud mientras procesamos esta, la
 		 * misma se guardará en una cola. */
-		sa = accept(s, 0, 0);
+		 
+		sa = accept(s, (struct sockaddr *) &dir_cliente, &size_sin);
 		if (sa < 0) fatal("Error al ejecutar accept");
-
+		printf("Recibiendo consulta del cliente (%s) puerto %d\n",inet_ntoa(dir_cliente.sin_addr),ntohs(dir_cliente.sin_port));
 		read(sa, nombre_buscado, TAM_BUFFER);
 
 		printf("El cliente solicita: '%s'\n", nombre_buscado);

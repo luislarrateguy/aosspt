@@ -1,4 +1,4 @@
-#include <string.h>
+﻿#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
 
 	/* Se ha establecido la conexión. Se envía el nombre de la persona a la cual
 	 * queremos averiguar el teléfono. */
+	printf("Enviando consulta al servidor %s (%s), preguntando por: '%s'\n",argv[1],inet_ntoa(canal.sin_addr),argv[2]);
 	write(s, argv[2], strlen(argv[2]) + 1);
 
 	/* Obtiene los datos y los escribe en la salida estandar. */
