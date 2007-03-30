@@ -20,6 +20,20 @@ int substring(string sub, string cadena) {
 	return 0;
 }
 
+string getNombre (string linea) {
+	string resultado;
+	
+	if (linea == NULL)
+		return "";
+
+	strtok(linea, ";");
+	resultado = strtok(NULL, "\0");
+	
+	if (resultado != NULL)
+		return resultado;
+	return "";
+}
+
 /* Retorna la cadena recibida como parametro en
    mayusculas. Utilizada para hacer las consultas
    case insensitive */
@@ -42,4 +56,3 @@ string uppercase (string s) {
 	
 	return resultado;
 }
-

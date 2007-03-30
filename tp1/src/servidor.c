@@ -67,10 +67,11 @@ int main(int argc, char** argv) {
 			/* Quito el fin de linea ('\n') de la línea leída */
 			linea[strlen(linea) - 1] = '\0';
 			
+			strcpy(buffer_envio, linea);
+			
 			/* Si la cadena recibida es subcadena de la linea leida
 			   en el archivo, se la enviamos al cliente */
-			if (substring(nombre_buscado, linea)) {
-				strcpy(buffer_envio, linea);
+			if (substring(nombre_buscado, getNombre(linea))) {
 				encontrado = encontrado + 1;
 				printf("\tEnviando respuesta %d: '%s'\n", encontrado, buffer_envio);
 				write(sa, buffer_envio, TAM_BUFFER);
@@ -101,4 +102,3 @@ int main(int argc, char** argv) {
 	if (fclose(archivo) == EOF)
 		printf("Error al cerrar el archivo\n");
 }
-
