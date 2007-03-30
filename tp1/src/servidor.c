@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
 		read(sa, nombre_buscado, TAM_BUFFER);
 
-		printf("El cliente envia: '%s'\n", nombre_buscado);
+		printf("El cliente solicita: '%s'\n", nombre_buscado);
 		
 		encontrado = 0;
 		
@@ -69,7 +69,8 @@ int main(int argc, char** argv) {
 			   en el archivo, se la enviamos al cliente */
 			if (substring(nombre_buscado, linea)) {
 				strcpy(buffer_envio, linea);
-				encontrado = 1;
+				encontrado = encontrado + 1;
+				printf("\tEnviando respuesta %d: '%s'\n", encontrado, buffer_envio);
 				write(sa, buffer_envio, TAM_BUFFER);
 			}
 		}

@@ -7,7 +7,7 @@
 #include "datos.h"
 
 int main(int argc, char** argv) {
-	int conexion, s;
+	int conexion, s, cantRep = 0;
 
 	/* El nombre del servidor (no la IP) */
 	struct hostent *nombreServidor;
@@ -59,8 +59,10 @@ int main(int argc, char** argv) {
 		}
 		else if (strcmp(buffer, FIN_DATOS) == 0)
 			return 0;
-		else
-			printf("\t'%s'\n", buffer);
+		else {
+			cantRep = cantRep + 1;
+			printf("\tCoincidencia %d: '%s'\n", cantRep, buffer);
+		}
 	}
 
 	return 0;
