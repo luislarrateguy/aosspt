@@ -1,4 +1,4 @@
-﻿#include <string.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/fcntl.h>
 #include <sys/socket.h>
@@ -79,10 +79,17 @@ int main(int argc, char** argv) {
 
 		/* Si no encontramos ningun nombre relacionado retornamos
 		   un mensaje de error */
-		if (!encontrado)
+		if (!encontrado) {
 			write(sa, TEL_NO_ENCONTRADO, strlen(TEL_NO_ENCONTRADO) + 1);
-		else
+			printf("\tNo se han encontraron coincidencias\n");
+			
+		}
+		else {
 			write(sa, FIN_DATOS, strlen(FIN_DATOS) + 1);
+			printf("\tRespuesta a la consulta completada\n");
+		}
+
+		printf("----\n");
 
 		close(sa);
 		
@@ -94,3 +101,4 @@ int main(int argc, char** argv) {
 	if (fclose(archivo) == EOF)
 		printf("Error al cerrar el archivo\n");
 }
+

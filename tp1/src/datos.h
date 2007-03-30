@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define PUERTO_SERVIDOR 2222
@@ -16,3 +16,4 @@ void fatal(string mensaje) {
 	fprintf(stderr, "%s\n", mensaje);
 	exit(1);
 }
+
