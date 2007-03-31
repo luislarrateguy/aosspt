@@ -1,6 +1,6 @@
-/* Devuelve 1 si la 'sub' es subcadena de 'cadena',
+﻿/* Devuelve 1 si la 'sub' es subcadena de 'cadena',
    en caso contrario retorna 0 */
-int substring(string sub, string cadena) {
+/* int substring(string sub, string cadena) {
 	int i = 0;
 	int j = 0;
 
@@ -8,8 +8,28 @@ int substring(string sub, string cadena) {
 		if (sub[j] == cadena[i]) {
 			i++;
 			j++;			
+		} else {
+			i++;
+			j = 0;
 		}
-		else {
+	}
+	
+	if (sub[j] == '\0')
+		return 1;
+	return 0;
+} */
+int substring(string sub, string cad) {
+	int j = 0;
+	int i = 0;
+
+	while ((sub[j] != '\0') && (cad[i] != '\0')) {
+		if ((sub[j] == cad[i]) ||
+			(sub[j] == (cad[i] + 0x20)) ||
+			((sub[j] + 0x20) == (cad[i]))) {
+			printf("%c",sub[j]);
+			i++;
+			j++;			
+		} else {
 			i++;
 			j = 0;
 		}
@@ -19,7 +39,6 @@ int substring(string sub, string cadena) {
 		return 1;
 	return 0;
 }
-
 string getNombre (string linea) {
 	string resultado;
 	
