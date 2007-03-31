@@ -105,3 +105,4 @@ int main(int argc, char** argv) {
 	if (fclose(archivo) == EOF)
 		printf("Error al cerrar el archivo\n");
 }
+
