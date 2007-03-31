@@ -1,4 +1,4 @@
-﻿/* Devuelve 1 si la 'sub' es subcadena de 'cadena',
+/* Devuelve 1 si la 'sub' es subcadena de 'cadena',
    en caso contrario retorna 0 */
 /* int substring(string sub, string cadena) {
 	int i = 0;
