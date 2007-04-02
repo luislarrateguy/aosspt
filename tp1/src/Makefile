@@ -26,7 +26,7 @@ disquette_dir: all doc
 	rm -rf ${DISQUETTE_DIR}
 	mkdir ${DISQUETTE_DIR}
 
-	# Copio el cÃ³digo fuente
+	# Copio el código fuente
 	mkdir ${DISQUETTE_DIR}/src
 	cp ${SRC} ${DISQUETTE_DIR}/src
 
@@ -34,11 +34,11 @@ disquette_dir: all doc
 	mkdir ${DISQUETTE_DIR}/obj
 	cp ${OBJ} ${DISQUETTE_DIR}/obj
 
-	# Copio la documentaciÃ³n
+	# Copio la documentación
 	mkdir ${DISQUETTE_DIR}/doc
 	cp ../doc/main.pdf ${DISQUETTE_DIR}/doc/documentacion.pdf
 
-# Copia todos los datos del disquette a la ubicaciÃ³n especificada en el
+# Copia todos los datos del disquette a la ubicación especificada en el
 # enunciado.
 copy: disquette_dir
 	# Creo el arbol de directorios y copio el contenido del disquette
@@ -71,7 +71,7 @@ imagen_disquette: disquette_dir
 	rm -rf ${MOUNT_DIR}
 	rm -rf ${DISQUETTE_DIR}
 
-# Copia el contenido de la imagen del disquette a un disquette fÃ­sico
+# Copia el contenido de la imagen del disquette a un disquette físico
 disquette: imagen_disquette
 	sudo cat ${IMAGEN_D} > /dev/fd0
 	rm -rf ${IMAGEN_D}

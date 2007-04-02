@@ -15,22 +15,22 @@ int main(int argc, char** argv) {
 	/* Buffer para almacenar la respuesta del servidor */
 	char buffer[TAM_BUFFER];
 
-	/* Contiene la direcci贸n IP */
+	/* Contiene la direcci髇 IP */
 	struct sockaddr_in canal;
 
 	if (argc != 3) {
 		fatal("Uso: rphone <IP-SERVIDOR> <NOMBRE-PERSONA>");
 	}
 
-	/* Supongo que he pasado como par谩metro el nombre del host.
-	 * Intento obtener la IP del mismo. Si esto falla, quiza el par谩metro
-	 * sea la direcci贸n IP misma (es decir, no hace falta usar DNS) */
+	/* Supongo que he pasado como par醡etro el nombre del host.
+	 * Intento obtener la IP del mismo. Si esto falla, quiza el par醡etro
+	 * sea la direcci髇 IP misma (es decir, no hace falta usar DNS) */
 	nombreServidor = gethostbyname(argv[1]);
 
 	if (!nombreServidor) {
 		nombreServidor = gethostbyaddr(argv[1], strlen(argv[1]), AF_INET);
 
-		if (!nombreServidor) error("La direcci贸n del servidor es inv谩lida.");
+		if (!nombreServidor) error("La direcci髇 del servidor es inv醠ida.");
 	}
 
 	s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -45,8 +45,8 @@ int main(int argc, char** argv) {
 	conexion = connect(s, (struct sockaddr*) &canal, sizeof(canal));
 	if (conexion < 0) fatal("Fallo al intentar conectar");
 
-	/* Se ha establecido la conexi贸n. Se env铆a el nombre de la persona a la cual
-	 * queremos averiguar el tel茅fono. */
+	/* Se ha establecido la conexi髇. Se env韆 el nombre de la persona a la cual
+	 * queremos averiguar el tel閒ono. */
 	printf("Enviando consulta al servidor %s (%s), preguntando por: '%s'\n",
 		argv[1],inet_ntoa(canal.sin_addr),argv[2]);
 	write(s, argv[2], strlen(argv[2]) + 1);
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 
 	while (read(s, buffer, TAM_BUFFER) != 0) {
 		if (strcmp(buffer, TEL_NO_ENCONTRADO) == 0) {
-			printf("\tNo hay entradas que sasfagan la b煤squeda.\n");
+			printf("\tNo hay entradas que sasfagan la b鷖queda.\n");
 			return 0;
 		}
 		else if (strcmp(buffer, FIN_DATOS) == 0)

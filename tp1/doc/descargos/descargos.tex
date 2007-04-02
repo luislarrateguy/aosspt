@@ -1,3 +1,19 @@
 \section{Descargos}
 
-No hay descargos.
+\subsection{Locales}
+El enunciado dice que sistema debe funcionar en modo case insensitive. Si
+observamos la tabla ASCII\footnote{http://www.asciitable.com/} podemos ver que
+la diferencia entre las letras minúsculas y mayúsculas es siempre 0x20 (32 en
+decimal). Por lo tanto es fácil pasar de mayúsculas a minúsculas, o viceversa.
+
+El problema se presenta con las vocales acentudadas. Si bien nuestro código
+funciona en nuestras máquinas (si buscamos una ``é'' o ``É'' devolverá ``San
+Martin, José''), todo depende del locale que utilice el sistema donde se
+ejecuta el cliente. El mismo debe ser ISO-8859-1 o ISO-8859-15. No habría
+problemas con el servidor, ya que éste sólo lee el archivo de guía (cuay
+codificación por supuesto es también ISO-8859-1), y no recibe datos del usuario
+a través de la consola.
+
+Si se utiliza la terminal de Gnome, es fácil, desde el menú \emph{Terminal}
+cambiar la codificación de la misma a ISO-8859-1 o ISO-8859-15.
+

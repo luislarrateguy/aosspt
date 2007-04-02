@@ -57,7 +57,7 @@ comunes()
 	# Convertimos los archivos latin1 a utf8
 	if file ${1} | grep -q "ISO-8859"; then
 		iconv -f latin1 -t utf8 ${1} > ${1}.utf8
-		mv ${1}.utf ${1}
+		mv ${1}.utf8 ${1}
 		echo "   Convertido de ISO-8859 a UTF-8"
 	fi
 }

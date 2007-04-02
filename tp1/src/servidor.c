@@ -33,8 +33,8 @@ int main(int argc, char** argv) {
 	/* Manipulamos algunas opciones del socket:
 	 *  - SOL_SOCKET especifica el nivel de las opciones que queremos
 	 *    modificar.
-	 *  - SO_REUSEADDR es la opciÃ³n que vamos a modificar.
-	 *  - Los siguientes argumentos activan dicha opciÃ³n.
+	 *  - SO_REUSEADDR es la opción que vamos a modificar.
+	 *  - Los siguientes argumentos activan dicha opción.
 	 */ 
 	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char*) &on, sizeof(on));
 
@@ -44,11 +44,11 @@ int main(int argc, char** argv) {
 	l = listen(s, TAM_COLA);
 	if (l < 0) fatal("Error al ejecutar listen");
 
-	/* Esperamos una conexiÃ³n y la atendemos. */
+	/* Esperamos una conexión y la atendemos. */
 	while (1) {
 		/* Nos bloqueamos para atender la solicitud. Si llega
 		 * una nueva solicitud mientras procesamos esta, la
-		 * misma se guardarÃ¡ en una cola. */
+		 * misma se guardará en una cola. */
 		 
 		sa = accept(s, (struct sockaddr *) &dir_cliente, &size_sin);
 		if (sa < 0) fatal("Error al ejecutar accept");
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 			/* Leemos la linea */
 			fgets(linea, TAM_LINEA, archivo);
 			
-			/* Quito el fin de linea ('\n') de la lÃ­nea leÃ­da */
+			/* Quito el fin de linea ('\n') de la línea leída */
 			linea[strlen(linea) - 1] = '\0';
 			
 			strcpy(buffer_envio, linea);
