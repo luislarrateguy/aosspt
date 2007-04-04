@@ -45,6 +45,10 @@ int substring(string sub, string cad) {
 		return 1;
 	return 0;
 }
+
+/* Recibe una línea leída del archivo 'guia' y devuelve el
+ * nombre y apellido, es decir, lo que se encuentra después
+ * del punto y coma (;), quitando el número telefónico. */
 string getNombre (string linea) {
 	string resultado;
 	
