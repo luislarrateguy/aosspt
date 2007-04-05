@@ -20,7 +20,7 @@ diffs_texs()
 		if [ -f ${DIR_SRC}/${file}.orig ]; then
 			echo Procesando archivo ${file};
 			diff -u ${DIR_SRC}/${file}.orig ${DIR_SRC}/${file} > ${DESTINO}/${file}.diff;
-			lgrind -t 8 -i -lsrc ${DESTINO}/${file}.diff > ${DESTINO}/${file}.diff.tex;
+			lgrind -t 4 -i -lc ${DESTINO}/${file}.diff > ${DESTINO}/${file}.diff.tex;
 			rm ${DESTINO}/${file}.diff;
 
 			comunes ${DESTINO}/${file}.diff.tex
@@ -43,7 +43,13 @@ texs()
 		# esos deben pasarse a la función "diffs_texs"
 		if [ ! -f ${DIR_SRC}/${file}.orig ]; then
 			echo texs - archivo ${file};
-			lgrind -t 8 -i -lsrc ${DIR_SRC}/${file} > ${DESTINO}/${file}.tex;
+
+			cp ${DIR_SRC}/${file} ${DIR_SRC}/${file}.to_utf8
+			comunes ${DIR_SRC}/${file}.to_utf8
+
+			lgrind -t 4 -i -lsrc ${DIR_SRC}/${file}.to_utf8 > ${DESTINO}/${file}.tex;
+
+			rm ${DIR_SRC}/${file}.to_utf8
 
 			comunes ${DESTINO}/${file}.tex
 		fi

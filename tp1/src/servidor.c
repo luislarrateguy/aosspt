@@ -34,8 +34,7 @@ int main(int argc, char** argv) {
 	 *  - SOL_SOCKET especifica el nivel de las opciones que queremos
 	 *    modificar.
 	 *  - SO_REUSEADDR es la opción que vamos a modificar.
-	 *  - Los siguientes argumentos activan dicha opción.
-	 */ 
+	 *  - Los siguientes argumentos activan dicha opción.  */ 
 	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char*) &on, sizeof(on));
 
 	b = bind(s, (struct sockaddr*) &canal, sizeof(canal));
