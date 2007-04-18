@@ -1,0 +1,25 @@
+#!/bin/sh
+
+LATEX_OPTIONS='-file-line-error -halt-on-error'
+
+if [ -z "$1" ]; then
+	CANT_VECES_COMPILAR=3
+else
+	CANT_VECES_COMPILAR=$1
+fi
+
+if [ $CANT_VECES_COMPILAR -lt 1 ]; then
+	echo Se debe pasar un parámetro numérico mayor a 0
+	exit 1
+fi
+
+./makediffs
+while [ $CANT_VECES_COMPILAR -gt 0 ]; do
+	if (pdflatex $LATEX_OPTIONS main); then
+		CANT_VECES_COMPILAR=`expr $CANT_VECES_COMPILAR - 1`
+	else
+		exit 1
+	fi
+done
+
+exit 0

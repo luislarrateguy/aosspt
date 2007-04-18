@@ -1,0 +1,82 @@
+\ProvidesPackage{estilo}
+\RequirePackage{fancyheaders}
+\newcommand{\chaptermark}[1]{\markboth{#1}{}}
+%
+% Lets have some nice headings
+%
+\pagestyle{fancyplain}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection{} #1}}
+\lhead[\fancyplain{}{\bfseries\thepage}]
+    {\fancyplain{}{\bfseries\rightmark}}
+\rhead[\fancyplain{}{\bfseries\leftmark}]
+    {\fancyplain{}{\bfseries\thepage}}
+\cfoot[]{}
+\addtolength{\headheight}{1.6pt}
+
+%
+% Estilo cursiva para los nombres de archivos
+%
+\newcommand{\archivo}[1] {\mbox{\textit{#1}}}
+
+%
+% Estilo para una variable
+%
+\newcommand{\variable}[1] {\mbox{\textit{#1}}}
+
+%
+% Estilo para un método
+%
+\newcommand{\metodo}[1] {\mbox{\textsl{#1}}}
+
+%
+% Estilo para código
+%
+\newcommand{\codigo}[1] {\mbox{\texttt{#1}}}
+
+%
+% Incluir imagen
+%
+\newcommand{\incluirimagen}[2]{
+  \begin{center}
+    \makebox{\framebox{\includegraphics*[#1]{#2}}}
+  \end{center}
+}
+
+%
+% Comando
+%
+\newcommand{\comando}[1]{
+  \vspace{0.1ex}
+  \begin{center}
+    \makebox{\framebox{\texttt{#1}}}
+  \end{center}
+  \vspace{0.1ex}
+}
+
+%
+% Salida por consola
+%
+\newcommand{\salida}[1]{
+  \vspace{3ex}
+  \hrule
+  \begin{center}
+    \verbatiminput{#1}
+  \end{center}
+  \hrule
+  \vspace{3ex}
+}
+
+%
+% Para indicar cosas por terminar (TODO)
+%
+\newcommand{\TODO}[1]{
+  \colorbox{yellow}{TODO:} #1
+}
+
+%
+% Para indicar cosas por corregir (FIXME)
+%
+\newcommand{\FIXME}[1]{
+  \colorbox{red}{FIXME:} #1
+}
