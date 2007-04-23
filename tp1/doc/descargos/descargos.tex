@@ -8,7 +8,7 @@ decimal). Por lo tanto es fácil pasar de mayúsculas a minúsculas, o viceversa
 
 El problema se presenta con las vocales acentuadas. Si bien nuestro código
 funciona en nuestras máquinas (si buscamos una ``é'' o ``É'' devolverá ``San
-Martin, José''), todo depende del locale que utilice el sistema donde se
+Martín, José''), todo depende del locale que utilice el sistema donde se
 ejecuta el cliente. El mismo debe ser ISO-8859-1 o ISO-8859-15. No habría
 problemas con el servidor, ya que éste sólo lee el archivo de guía (cuya
 codificación por supuesto es también ISO-8859-1), y no recibe datos del usuario
@@ -23,4 +23,10 @@ Por ejemplo, si se utiliza UTF-8 en lugar de una de las mencionadas
 anteriormente, las letras acentuadas constan de dos caracteres. De esta forma
 el sistema no funciona: el cliente envía datos que el servidor espera con otra
 codificación.
+
+\subsection{Archivo \archivo{Makefile}}
+El archivo \archivo{Makefile} tiene más código del pedido en el enunciado. Este
+código extra es para crear automáticamente una imagen del disquete, o crear el
+disquete mismo colocando uno en la disquetera. Son \emph{targets} para
+facilitarnos algunas cosas.
 

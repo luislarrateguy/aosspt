@@ -2,7 +2,7 @@ DISQUETTE_DIR=./temp-disquette
 IMAGEN_D=./imagenDisquette
 MOUNT_DIR=./temp-mount-disquette
 
-SRC=datos.h cliente.c servidor.c Makefile
+SRC=datos.h cliente.c servidor.c strings.c Makefile
 OBJ=../obj/rphone ../obj/rphoned
 
 all: ${OBJ}
@@ -21,7 +21,7 @@ doc:
 clean:
 	rm -rf ${OBJ}
 
-# Arma un directorio temporal con el contenido del disquette
+# Arma un directorio temporal con el contenido del disquette.
 disquette_dir: all doc
 	rm -rf ${DISQUETTE_DIR}
 	mkdir ${DISQUETTE_DIR}
@@ -39,8 +39,9 @@ disquette_dir: all doc
 	cp ../doc/main.pdf ${DISQUETTE_DIR}/doc/documentacion.pdf
 
 # Copia todos los datos del disquette a la ubicación especificada en el
-# enunciado.
-copy: disquette_dir
+# enunciado. Este comando sólo tiene utilidad para ser ejecutado por el
+# profesor, y no los integrantes del grupo.
+copy:
 	# Creo el arbol de directorios y copio el contenido del disquette
 	mkdir -p /home/soa/2007/tp1/UNO/
 	cp -r ../* /home/soa/2007/tp1/UNO/
