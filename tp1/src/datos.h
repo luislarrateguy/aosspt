@@ -4,7 +4,7 @@
 #define PUERTO_SERVIDOR 2222
 #define TAM_BUFFER 256
 #define TAM_COLA 10
-#define RUTA_ARCHIVO_GUIA "../etc/guia"
+#define RUTA_ARCHIVO_GUIA "/etc/guia"
 #define TAM_LINEA 81
 
 typedef char* string;
