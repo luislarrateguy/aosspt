@@ -5,10 +5,10 @@
  */
 
 #include "timesync.h"
-
+#include <time.h>
 
 int
-timesync_1(char *host)
+*timesync_1(char *host)
 {
 	CLIENT *clnt;
 	int  *result_1;
@@ -29,7 +29,7 @@ timesync_1(char *host)
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
-	return *result_1;
+	return result_1;
 }
 
 
@@ -37,14 +37,16 @@ int
 main (int argc, char *argv[])
 {
 	char *host;
+	char *timeStr = (char *) malloc(10);
 
 	if (argc < 2) {
 		printf ("usage: %s server_host\n", argv[0]);
 		exit (1);
 	}
 	host = argv[1];
-	int res = timesync_1 (host);
-//	size_t sres = strftime( time, 100, "%H:%M:%S" , localtime(time) );
-	printf ("%d\n", res);
+	int *res = timesync_1 (host);
+	size_t sres = strftime( timeStr, 10, "%H:%M:%S" ,  localtime((time_t*)res) );
+	printf ("%s\n", timeStr);
+	free(timeStr);
 exit (0);
 }
