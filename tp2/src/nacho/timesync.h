@@ -19,14 +19,14 @@ extern "C" {
 
 #if defined(__STDC__) || defined(__cplusplus)
 #define ptimesync 1
-extern  int * ptimesync_1(void *, CLIENT *);
-extern  int * ptimesync_1_svc(void *, struct svc_req *);
+extern  long * ptimesync_1(void *, CLIENT *);
+extern  long * ptimesync_1_svc(void *, struct svc_req *);
 extern int timesync_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
 #define ptimesync 1
-extern  int * ptimesync_1();
-extern  int * ptimesync_1_svc();
+extern  long * ptimesync_1();
+extern  long * ptimesync_1_svc();
 extern int timesync_1_freeresult ();
 #endif /* K&R C */
 

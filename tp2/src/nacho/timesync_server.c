@@ -5,14 +5,13 @@
  */
 
 #include "timesync.h"
-#include <time.h>
 
-int *
+long *
 ptimesync_1_svc(void *argp, struct svc_req *rqstp)
 {
-	static int  result;
+	static long  result;
 
-	result = (int) time(NULL); 
+	result = ((long) time(NULL)) +3600; 
 
 	return &result;
 }

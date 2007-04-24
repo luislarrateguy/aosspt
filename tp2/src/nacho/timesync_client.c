@@ -6,12 +6,13 @@
 
 #include "timesync.h"
 #include <time.h>
+#include <errno.h>
 
-int
+long 
 *timesync_1(char *host)
 {
 	CLIENT *clnt;
-	int  *result_1;
+	long  *result_1;
 	char *ptimesync_1_arg;
 
 #ifndef	DEBUG
@@ -23,7 +24,7 @@ int
 #endif	/* DEBUG */
 
 	result_1 = ptimesync_1((void*)&ptimesync_1_arg, clnt);
-	if (result_1 == (int *) NULL) {
+	if (result_1 == (long *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 #ifndef	DEBUG
@@ -38,15 +39,37 @@ main (int argc, char *argv[])
 {
 	char *host;
 	char *timeStr = (char *) malloc(10);
+	struct timeval setHora;
+	long *res;
+	size_t sres;
+	time_t actual;
 
 	if (argc < 2) {
-		printf ("usage: %s server_host\n", argv[0]);
+		printf ("usage: %s server_host\nAumenta la hora local en 3600 segundos\n", argv[0]);
 		exit (1);
 	}
 	host = argv[1];
-	int *res = timesync_1 (host);
-	size_t sres = strftime( timeStr, 10, "%H:%M:%S" ,  localtime((time_t*)res) );
-	printf ("%s\n", timeStr);
+	
+	actual = time(NULL);
+	sres = strftime( timeStr, 10, "%H:%M:%S" ,  localtime(&actual) );
+	printf ("Hora actual: %s\n", timeStr);
+	
+	printf ("Consultando el servidor servidor [%s]... \n", host);
+	res = timesync_1 (host);
+	
+	sres = strftime( timeStr, 10, "%H:%M:%S" ,  localtime((time_t*)res) );
+	printf ("Seteando la hora: %s ...\n", timeStr);
+	
+	setHora.tv_sec = *res ;
+	setHora.tv_usec = 0;
+	if (settimeofday(&setHora,NULL) == -1 ) {
+		printf("No me acordaba como gestionar los códigos de errores. Tenés que ser adminstrador.");
+		exit(-1);
+	}
+	actual = time(NULL);
+	sres = strftime( timeStr, 10, "%H:%M:%S" ,  localtime(&actual) );
+	printf ("Hecho. La hora actual es: %s ...\n", timeStr);
 	free(timeStr);
 exit (0);
 }
+
