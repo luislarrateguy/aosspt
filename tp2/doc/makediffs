@@ -47,7 +47,7 @@ texs()
 			cp ${DIR_SRC}/${file} ${DIR_SRC}/${file}.to_utf8
 			comunes ${DIR_SRC}/${file}.to_utf8
 
-			lgrind -t 4 -i -lsrc ${DIR_SRC}/${file}.to_utf8 > ${DESTINO}/${file}.tex;
+			lgrind -t 4 -i -lc ${DIR_SRC}/${file}.to_utf8 > ${DESTINO}/${file}.tex;
 
 			rm ${DIR_SRC}/${file}.to_utf8
 
@@ -69,6 +69,6 @@ comunes()
 }
 
 # dumpe2fs
-ARCHIVOS=$(find $DIR_SRC -name *.c -o -name *.h | grep -v ".svn" | grep -v ".mo" | grep -v ".tex")
+ARCHIVOS=$(find $DIR_SRC -name *.c -o -name *.h -o -name *.x | grep -v ".svn" | grep -v ".mo" | grep -v ".tex")
 texs
 
