@@ -51,7 +51,7 @@ int main (int argc, char *argv[])
 	time_t actual;
 
 	if (argc < 2) {
-		printf ("usage: %s server_host\nAumenta la hora local en 3600 segundos\n", argv[0]);
+		printf ("uso: %s server_host\n", argv[0]);
 		exit (1);
 	}
 	host = argv[1];
