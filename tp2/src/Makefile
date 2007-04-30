@@ -3,8 +3,8 @@
 
 # Parameters
 
-CLIENT = timesync_client
-SERVER = timesync_server
+CLIENT = ../obj/timesync_client
+SERVER = ../obj/timesync_server
 
 SOURCES_CLNT.c = 
 SOURCES_CLNT.h = 

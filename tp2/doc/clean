@@ -10,6 +10,8 @@ rm -rf main.pdf
 borrar
 cd principal
 borrar
+cd ../titulo
+borrar
 cd ../descargos
 borrar
 cd ../licencia
