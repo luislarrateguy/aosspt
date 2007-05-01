@@ -26,17 +26,6 @@ long* timesync(char *host)
 
 int main (int argc, char *argv[])
 {
-	/*char *host;
-
-	if (argc < 2) {
-		printf ("uso: %s server_host\n", argv[0]);
-		exit (1);
-	}
-
-	host = argv[1];
-	timesyncprog_1 (host);
-	exit (0);
-	*/
 	char *host;
 	char *timeStr = (char *) malloc(10);
 	struct timeval setHora;
