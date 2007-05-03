@@ -32,3 +32,12 @@ GNOME
 IP
 host
 localhost
+RPC
+rpcgen
+make
+src
+timesync
+server
+empty
+linux
+
