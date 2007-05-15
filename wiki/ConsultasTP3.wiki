@@ -17,5 +17,4 @@ Otra pregunta relacionada: ¿como armar esa estructura jerárquica? ¿cómo hace
 Esta es una descripción de cómo yo entiendo que funciona el algoritmo de Raymond al inicializarse:
  # Un proceso mutexd se ejecuta de la siguiente forma: $ ./mutexd nroPuerto
  # Luego busca en el archivo de configuración el puerto nroPuerto. Podría comprobar que nadie este ocupando dicho puerto.
- # Una vez que tomó el puerto nroPuerto en la máquina local (todos los mutexd se ejecutan en la misma máquina), lee los otros registros del archivo mutex.cfg para saber cuales son los otros servidores.
-El primero que se ejecute no se va a poder conectar con ninguno. No importa... cuando se ejecute el segundo le va a avisar.
+ # Una vez que tomó el puerto nroPuerto en la máquina local (todos los mutexd se ejecutan en la misma máquina), lee los otros registros del archivo mutex.cfg para saber cuales son los otros servidores. El primero que se ejecute no se va a poder conectar (mensaje HELLO) con ninguno. No importa... cuando se ejecute el segundo le va a avisar (con un HELLO, y el primero le contesta con HELLO). Y cuando se ejecute el tercero le va a avisar a los otros dos, y así. De esta forma van armando su lista de procesos mutexd online. *No comienza el algoritmo hasta que* todos los mutexd tengan online a todos los otros mutexd que figuran en el archivo.
