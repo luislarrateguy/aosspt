@@ -10,3 +10,4 @@ Dudas/Consultas referidas al trabajo practico nº 3.
 
  # En todo momento estan funcionando los 7 mutexd o pueden ir "apareciendo" de a poco?
  # Debemos considerar que los mutexd pueden dejar de funcionar en algun momento?
+ # En la figura del enunciado donde aprece la jerarquía de procesos mutexd, S1, S2, etc, donde S1 tiene el token... ¿cómo distinguir qué proceso mutexd va a tener el token al comienzo? ¿con el archivo de configuración /etc/mutex.cfg?
