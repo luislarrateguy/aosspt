@@ -11,3 +11,11 @@ Dudas/Consultas referidas al trabajo practico nº 3.
  # En todo momento estan funcionando los 7 mutexd o pueden ir "apareciendo" de a poco?
  # Debemos considerar que los mutexd pueden dejar de funcionar en algun momento?
  # En la figura del enunciado donde aprece la jerarquía de procesos mutexd, S1, S2, etc, donde S1 tiene el token... ¿cómo distinguir qué proceso mutexd va a tener el token al comienzo? ¿con el archivo de configuración /etc/mutex.cfg? ¿quizá simplemente al primer proceso ubicado en dicho archivo?
+Otra pregunta relacionada: ¿como armar esa estructura jerárquica? ¿cómo hacer que S4 y S5 dependan de S2?
+
+== Inicialización del algoritmo ==
+Esta es una descripción de cómo yo entiendo que funciona el algoritmo de Raymond al inicializarse:
+ # Un proceso mutexd se ejecuta de la siguiente forma: $ ./mutexd nroPuerto
+ # Luego busca en el archivo de configuración el puerto nroPuerto. Podría comprobar que nadie este ocupando dicho puerto.
+ # Una vez que tomó el puerto nroPuerto en la máquina local (todos los mutexd se ejecutan en la misma máquina), lee los otros registros del archivo mutex.cfg para saber cuales son los otros servidores.
+El primero que se ejecute no se va a poder conectar con ninguno. No importa... cuando se ejecute el segundo le va a avisar.
