@@ -5,8 +5,8 @@
 Dudas/Consultas referidas al trabajo practico nº 3.
 
 
+
 = Consultas =
 
  # En todo momento estan funcionando los 7 mutexd o pueden ir "apareciendo" de a poco?
  # Debemos considerar que los mutexd pueden dejar de funcionar en algun momento?
-
