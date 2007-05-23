@@ -1,4 +1,5 @@
 #summary Convenciones para nombrar cosas
+#labels Featured
 
 = Issues =
 
