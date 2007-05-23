@@ -20,9 +20,26 @@
 */
 
 #include <string.h>
-#include "queue/queue.h"
-#include "datos.h"
+#include <sys/types.h>
+#include <sys/fcntl.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <string.h>
 
+#include "queue/queue.h"
+#include "common.c"
+
+#define RUTA_MUTEX_CNF "../etc/mutex.cfg"
+#define CANT_MUTEXD 7
+
+/* Estructura utilizada para retornar la configuración
+ * de puertos leída en la función 'leerPuertos'. En la
+ * primer columna de la matriz está el puerto del mutex
+ * y en la segunda el puerto del padre */
+struct puertos {
+	int puerto[CANT_MUTEXD][2];
+};
 
 /* Retorna una estructura 'puertos' con el numero de puerto
  * de cada mutex y el de su padre, leidos del archivo 'mutex.cfg' */ 
@@ -65,6 +82,42 @@ struct puertos leerPuertos () {
 
 
 int main(int argc, char* argv[]) {
-	return 0;
+	int s, b, l, puerto;
+	struct sockaddr_in canal;
+	struct msg mensaje;
+	socklen_t fromlen;
+
+	if (argc != 2)
+		fatal("Uso: mutexd <puerto>");
+
+	puerto = atoi(argv[1]);
+
+	/* TODO: Se busca el puerto en el archivo de configuración, y
+	 * se halla el puerto del holder. */
+
+	s = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (s < 0) fatal("No se pudo crear el socket.");
+
+	memset(&canal, 0, sizeof(canal));
+	canal.sin_family = AF_INET;
+	canal.sin_addr.s_addr = htonl(INADDR_ANY);
+	canal.sin_port = htons(puerto);
+
+	b = bind(s, (struct sockaddr*)&canal, sizeof(canal));
+	if (b < 0) fatal("Error al ejecutar bind.");
+
+	while (1) {
+		fromlen = sizeof(canal);
+
+		if (recvfrom(s, (void *)&mensaje, sizeof(mensaje), 0,
+			(struct sockaddr*)&canal, &fromlen) < 0)
+			fatal("Error en recvfrom.");
+
+		printf("Recibido un mensaje de %s\n", inet_ntoa(canal.sin_addr));
+		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
+
+		/* TODO: Gestión de la región crítica  e implementación del
+ 		 * algoritmo de Raymond. */
+	}
 }
 
