@@ -1,0 +1,84 @@
+\subsection{Descripción del funcionamiento}
+
+% mutexd
+\subsubsection{\proceso{mutexd}}
+
+Un proceso \proceso{mutexd} se ejecuta de la siguiente forma:
+
+\comando{\$ ./mutexd numeroPuerto}
+
+\emph{numeroPuerto} indica el puerto donde el servidor va a escuchar. También
+utiliza este valor para buscar en el archivo de configuración
+\archivo{/etc/mutex.cfg} quién será su \emph{holder}. No sólo examina el
+registro del archivo con el valor del puerto pasado como argumento, sino que
+analiza todos los registros para conocer quiénes son los demás servidores.
+
+Cuando termina esta tarea de lectura del archivo de configuración, procede a
+enviar un mensaje \emph{HELLO} a cada uno de los servidores. Cada servidor que
+recibe un mensaje \emph{HELLO} marca al emisor del mismo como activo. Ningún
+servidor comienza su algoritmo hasta que no tenga marcados a todos los demás
+servidores como activos.
+
+
+% /etc/mutex.cfg
+\subsubsection{Archivo de configuración \archivo{/etc/mutex.cfg}}
+
+El archivo de configuración tiene la siguiente estructura:
+
+\salida{../etc/mutex.cfg}
+
+Cuando un proceso \proceso{mutexd} lee el archivo de configuración en busca de
+su \emph{holder}, utilizando \emph{numeroPuerto}, lo hace revisando la primer
+columna del mismo\footnote{Las columnas se separan con un espacio en blanco.}.
+Cuando lo encuentra, revisa si el valor correspondiente en la segunda columna
+es un número natural, correspondiente a un puerto, y de ser así sabe que a
+traves de ese puerto puede comunicarse con su \emph{holder}, y también sabe que
+él no tiene el token actualmente. \TODO{Aclarar qué simbolo indica que el
+proceso sí tiene el token}
+
+
+% mutexloop
+\subsubsection{\proceso{mutexloop}}
+
+Un proceso \proceso{mutexloop} se ejecuta de la siguiente forma:
+
+\comando{\$ ./mutexloop puertoServidor}
+
+\emph{puertoServidor} le indica en qué puerto debe conectarse para pedirle a su
+proceso \proceso{mutexd} correspondiente el permiso para entrar a la región
+crítica. Luego simplemente hace lo que tiene que hacer y sale de la misma,
+informándoselo al servidor.
+
+
+% Protocolo
+\subsubsection{Protocolo de comunicación}
+
+Los mensajes de comunicación son los siguientes:
+
+\TODO{Revisar si los mensajes son correctos}
+\begin{itemize}
+
+\item \textbf{REQUEST}: Es utilizado tanto por los servidores para el
+intercambio del token, como por los clientes hacia los servidores. Indica que
+el emisor desea obtener el token, para acceder (cliente) o dar permiso de
+acceder (servidor) a la región crítica.
+
+Los servidores lo envían a su \emph{HOLDER} sólo en caso de no poseer el token,
+y los clientes lo envían a su correspondiente servidor cuando intentan acceder
+la región crítica.
+
+\item \textbf{PRIVILEGE}: Sólamente puede enviarlo un servidor que tenga el
+token, pero el destinatario puede ser un cliente como otro servidor. La
+transferencia de un servidor \textsl{i} a uno \textsl{j} de este mensaje
+implica, primero, que el servidor \textsl{i} posee actualmente el token.
+Segundo, que el servidor \textsl{i} es hasta el momento el \emph{HOLDER} del
+servidor \textsl{j}. Tercero, que luego de recibido el mensaje, el servidor
+\textsl{j} será el que actualmente tenga el token, y cuarto, el \emph{HOLDER}
+del servidor \textsl{i} será \textsl{j}.
+
+\item \textbf{RELEASE}: Es utilizado únicamente por el cliente, y esta siempre
+dirigido a su correspondiente servidor. Sirve para indicarle que ha terminado
+de trabajar sobre la región crítica y desea liberarla.
+
+\end{itemize}
+

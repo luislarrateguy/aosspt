@@ -19,4 +19,6 @@ borrar
 cd ../hechoconsl
 borrar
 
-rm -rf ../src_tex/*
+rm -f ../src_tex/*.tex
+rm -f ../src_tex/queue/*.tex
+
