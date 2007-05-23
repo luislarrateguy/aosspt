@@ -19,10 +19,50 @@
 
 */
 
-#include <stdio.h>
+#include <string.h>
 #include "queue/queue.h"
+#include "datos.h"
 
-#define CONFIG "../etc/mutex.cfg"
+
+/* Retorna una estructura 'puertos' con el numero de puerto
+ * de cada mutex y el de su padre, leidos del archivo 'mutex.cfg' */ 
+struct puertos leerPuertos () {
+	FILE* archivo;
+	char linea[TAM_LINEA];
+	char* puerto;
+	char* puertoPadre;
+	struct puertos resultado;
+	int i = 0;
+
+	/* Abrimos el archivo */
+	if ((archivo = fopen(RUTA_MUTEX_CNF, "r")) == NULL)
+		fatal("No se pudo abrir el archivo /etc/mutexd.conf\n");
+	
+	while (!feof(archivo) && (i < CANT_MUTEXD))  {
+		/* Leemos la linea */
+		fgets(linea, TAM_LINEA, archivo);
+
+		/* Quito el fin de linea ('\n') de la línea leída */
+		linea[strlen(linea) - 1] = '\0';
+
+		puerto = strtok(linea, " ");
+		puertoPadre = strtok(NULL, "\0");
+		
+		if (puerto != NULL && puertoPadre != NULL) {
+			resultado.puerto[i][0] = atoi(puerto);
+			resultado.puerto[i][1] = atoi(puertoPadre);
+		}
+
+		i++;
+	}
+	
+	/* Cerramos el archivo */
+	if (fclose(archivo) == EOF)
+		fatal("Error al cerrar el archivo\n");
+	
+	return resultado;
+}
+
 
 int main(int argc, char* argv[]) {
 	return 0;
