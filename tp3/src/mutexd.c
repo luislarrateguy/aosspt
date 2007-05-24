@@ -30,7 +30,7 @@
 /* nacho: si les parece metanlas en otro lado, common.c por ejemplo
  * milton: para mi esta bien que estén acá, porque son propias del mutexd */
 
-int self,holder;
+int self,holder,cliente;
 bool asked, using;
 Queue colaServers;
 
@@ -61,7 +61,7 @@ struct puertos leerPuertos () {
 		/* Leemos la linea */
 		fgets(linea, TAM_LINEA, archivo);
 
-		/* Quito el fin de linea ('\n') de la lÃ­nea leÃ­da */
+		/* Quito el fin de linea ('\n') de la línea leída */
 		linea[strlen(linea) - 1] = '\0';
 
 		puerto = strtok(linea, " ");
@@ -86,16 +86,17 @@ void assignPrivilege() {
 	if( holder == self 
 		&& !using 
 		&& !IsEmpty(colaServers) ) {
-
+		struct msg mensaje;
+		mensaje.tipo = PRIVILEGE;
+		mensaje.from = self;
+		
 		holder = FrontAndDequeue(colaServers);
 		asked = FALSE;
-		if (holder = self) {
+
+		if (holder == self) {
 			using = TRUE;
-			/* enviar mensaje a cliente para que sepa
-			 * que esta dentro de la regiÃ³n crÃtica */
+			send_msg(mensaje, cliente);
 		} else {
-			struct msg mensaje;
-			mensaje.tipo = PRIVILEGE;
 			send_msg(mensaje, holder);
 		}
 	}
@@ -107,6 +108,7 @@ void makeRequest() {
 		&& !asked) {
 		struct msg mensaje;
 		mensaje.tipo = REQUEST;
+		mensaje.from = self;
 		send_msg(mensaje,holder);
 		asked = TRUE;
 	}
@@ -123,10 +125,12 @@ int main(int argc, char* argv[]) {
 	inicializada = FALSE;
 
 	puerto = atoi(argv[1]);
-
-	/* TODO: Se busca el puerto en el archivo de configuraciÃ³n, y
+	/* TODO: Se busca el puerto en el archivo de configuración, y
 	 * se halla el puerto del holder. */
-
+	/* self no debería ser modificado nunca. Indica el puerto del servidor
+	 * actual */
+	self = puerto;
+	
 	inicializar_servidor(puerto);
 
 	while (1) {
@@ -136,26 +140,26 @@ int main(int argc, char* argv[]) {
 		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
 		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
 
-		/* TODO: GestiÃ³n de la regiÃ³n crÃ­tica  e implementaciÃ³n del
+		/* TODO: Gestión de la región crótica  e implementación del
  		 * algoritmo de Raymond. 
-		 * Comenzado!*/
-		
-		/* Comienza el baile
-		
+		 * Comenzado! */
+			
 		if (mensaje.tipo == ENTRAR_RC) {
+			cliente = mensaje.from;
 			Enqueue(self,colaServers);
 		}
 		if (mensaje.tipo == REQUEST) {
-			Enqueue(elPuertoDelQuePideRelativo,colaServers);
+			Enqueue(mensaje.from,colaServers);
 		}
 		if (mensaje.tipo == PRIVILEGE) {
 			holder = self;
 		}
 		if (mensaje.tipo == SALIR_RC) {
-			using = false;
+			using = FALSE;
+			cliente = -1;
 		}
 		assignPrivilege();
-		makeRequest();*/
+		makeRequest();
 	}
 }
 
