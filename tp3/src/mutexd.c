@@ -33,6 +33,14 @@
 #define RUTA_MUTEX_CNF "../etc/mutex.cfg"
 #define CANT_MUTEXD 7
 
+/***** Variables Globales a las funciones *******/
+/* si les parece metanlas en otro lado, common.c por ejemplo */
+
+int self,holder;
+bool asked;
+Queue colaServers;
+
+
 /* Estructura utilizada para retornar la configuración
  * de puertos leída en la función 'leerPuertos'. En la
  * primer columna de la matriz está el puerto del mutex
@@ -80,9 +88,41 @@ struct puertos leerPuertos () {
 	return resultado;
 }
 
+void assignPrivilege() {
+	if( holder == self 
+		&& !using 
+		&& !IsEmpty(colaServers) ) {
+
+		holder = FrontAndDequeue(colaServers);
+		asked = false;
+		if (holder = self) {
+			using = true;
+			/* enviar mensaje a cliente para que sepa
+			 * que esta dentro de la región cr�tica */
+		} else {
+			struct msg mensaje;
+			mensaje.tipo = PRIVILEGE;
+			send(mensaje,holder);
+		}
+	}
+}
+
+void makeRequest() {
+	if (holder != self 
+		&& !IsEmtpy(colaServers) 
+		&& !asked) {
+		struct msg mensaje;
+		mensaje.tipo = REQUEST;
+		send(mensaje,holder);OA
+		asked = true;
+	}
+}
 
 int main(int argc, char* argv[]) {
+    /* NACHO: que son s, b y l? Ver si no son holder y self definidas por mi
+	 * afuera, arriba de todo. */
 	int s, b, l, puerto;
+
 	struct sockaddr_in canal;
 	struct msg mensaje;
 	socklen_t fromlen;
@@ -95,6 +135,10 @@ int main(int argc, char* argv[]) {
 	/* TODO: Se busca el puerto en el archivo de configuración, y
 	 * se halla el puerto del holder. */
 
+	/* NACHO: Todo esto de conexion lo pondria en una funcion aparte
+	 * por como me gusta programar. No lo hago porque séque lo van
+	 * a poner de nuevo como está si lo cambio jeje
+	 * */
 	s = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (s < 0) fatal("No se pudo crear el socket.");
 
@@ -108,7 +152,7 @@ int main(int argc, char* argv[]) {
 
 	while (1) {
 		fromlen = sizeof(canal);
-
+		
 		if (recvfrom(s, (void *)&mensaje, sizeof(mensaje), 0,
 			(struct sockaddr*)&canal, &fromlen) < 0)
 			fatal("Error en recvfrom.");
@@ -117,7 +161,25 @@ int main(int argc, char* argv[]) {
 		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
 
 		/* TODO: Gestión de la región crítica  e implementación del
- 		 * algoritmo de Raymond. */
+ 		 * algoritmo de Raymond. 
+		 * Comenzado!*/
+		
+		/* Comienza el baile */
+		
+		if (mensaje.tipo == ENTRAR_RC) {
+			Enqueue(self,colaServers);
+		}
+		if (mensaje.tipo == REQUEST) {
+			Enqueue(elPuertoDelQuePideRelativo,colaServers);
+		}
+		if (mensaje.tipo == PRIVILEGE) {
+			holder = self;
+		}
+		if (mensaje.tipo == SALIR_RC) {
+			using = false;
+		}
+		assignPrivilege();
+		makeRequest();
 	}
 }
 

@@ -2,6 +2,10 @@
 #include <stdlib.h>
 
 #define TAM_LINEA 81
+#define REQUEST    1
+#define ENTRAR_RC  2
+#define PRIVILEGIO 3
+#define SALIR_RC   4
 
 typedef char* string;
 
