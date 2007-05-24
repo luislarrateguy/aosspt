@@ -4,8 +4,8 @@ CC=gcc
 
 all: mutexd mutexloop
 
-mutexd: queue/queue.o queue/queue.h mutexd.o
-	$(CC) queue/queue.o mutexd.o -o $@
+mutexd: queue/queue.o common.o mutexd.o
+	$(CC) queue/queue.o common.o mutexd.o -o $@
 
 mutexloop: mutexloop.o
 	$(CC) mutexloop.o -o $@

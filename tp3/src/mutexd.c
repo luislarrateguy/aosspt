@@ -19,25 +19,19 @@
 
 */
 
-#include <string.h>
-#include <sys/types.h>
-#include <sys/fcntl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <string.h>
 
 #include "queue/queue.h"
-#include "common.c"
+#include "common.h"
 
 #define RUTA_MUTEX_CNF "../etc/mutex.cfg"
 #define CANT_MUTEXD 7
 
 /***** Variables Globales a las funciones *******/
-/* si les parece metanlas en otro lado, common.c por ejemplo */
+/* nacho: si les parece metanlas en otro lado, common.c por ejemplo
+ * milton: para mi esta bien que estén acá, porque son propias del mutexd */
 
 int self,holder;
-bool asked;
+bool asked, using;
 Queue colaServers;
 
 
@@ -67,7 +61,7 @@ struct puertos leerPuertos () {
 		/* Leemos la linea */
 		fgets(linea, TAM_LINEA, archivo);
 
-		/* Quito el fin de linea ('\n') de la línea leída */
+		/* Quito el fin de linea ('\n') de la lÃ­nea leÃ­da */
 		linea[strlen(linea) - 1] = '\0';
 
 		puerto = strtok(linea, " ");
@@ -94,77 +88,59 @@ void assignPrivilege() {
 		&& !IsEmpty(colaServers) ) {
 
 		holder = FrontAndDequeue(colaServers);
-		asked = false;
+		asked = FALSE;
 		if (holder = self) {
-			using = true;
+			using = TRUE;
 			/* enviar mensaje a cliente para que sepa
-			 * que esta dentro de la región cr�tica */
+			 * que esta dentro de la regiÃ³n crÃtica */
 		} else {
 			struct msg mensaje;
 			mensaje.tipo = PRIVILEGE;
-			send(mensaje,holder);
+			send_msg(mensaje, holder);
 		}
 	}
 }
 
 void makeRequest() {
 	if (holder != self 
-		&& !IsEmtpy(colaServers) 
+		&& !IsEmpty(colaServers) 
 		&& !asked) {
 		struct msg mensaje;
 		mensaje.tipo = REQUEST;
-		send(mensaje,holder);OA
-		asked = true;
+		send_msg(mensaje,holder);
+		asked = TRUE;
 	}
 }
 
 int main(int argc, char* argv[]) {
-    /* NACHO: que son s, b y l? Ver si no son holder y self definidas por mi
-	 * afuera, arriba de todo. */
-	int s, b, l, puerto;
+	int puerto;
 
-	struct sockaddr_in canal;
 	struct msg mensaje;
-	socklen_t fromlen;
 
 	if (argc != 2)
 		fatal("Uso: mutexd <puerto>");
 
+	inicializada = FALSE;
+
 	puerto = atoi(argv[1]);
 
-	/* TODO: Se busca el puerto en el archivo de configuración, y
+	/* TODO: Se busca el puerto en el archivo de configuraciÃ³n, y
 	 * se halla el puerto del holder. */
 
-	/* NACHO: Todo esto de conexion lo pondria en una funcion aparte
-	 * por como me gusta programar. No lo hago porque séque lo van
-	 * a poner de nuevo como está si lo cambio jeje
-	 * */
-	s = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (s < 0) fatal("No se pudo crear el socket.");
-
-	memset(&canal, 0, sizeof(canal));
-	canal.sin_family = AF_INET;
-	canal.sin_addr.s_addr = htonl(INADDR_ANY);
-	canal.sin_port = htons(puerto);
-
-	b = bind(s, (struct sockaddr*)&canal, sizeof(canal));
-	if (b < 0) fatal("Error al ejecutar bind.");
+	inicializar_servidor(puerto);
 
 	while (1) {
-		fromlen = sizeof(canal);
-		
-		if (recvfrom(s, (void *)&mensaje, sizeof(mensaje), 0,
-			(struct sockaddr*)&canal, &fromlen) < 0)
-			fatal("Error en recvfrom.");
 
-		printf("Recibido un mensaje de %s\n", inet_ntoa(canal.sin_addr));
+		receive_msg(&mensaje);
+		
+		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
 		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
 
-		/* TODO: Gestión de la región crítica  e implementación del
+		/* TODO: GestiÃ³n de la regiÃ³n crÃ­tica  e implementaciÃ³n del
  		 * algoritmo de Raymond. 
 		 * Comenzado!*/
 		
-		/* Comienza el baile */
+		/* Comienza el baile
 		
 		if (mensaje.tipo == ENTRAR_RC) {
 			Enqueue(self,colaServers);
@@ -179,7 +155,7 @@ int main(int argc, char* argv[]) {
 			using = false;
 		}
 		assignPrivilege();
-		makeRequest();
+		makeRequest();*/
 	}
 }
 

@@ -121,3 +121,4 @@ ElementType FrontAndDequeue(Queue Q) {
   return X;
 
 }
+

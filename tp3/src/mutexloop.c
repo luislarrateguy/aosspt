@@ -29,32 +29,20 @@
 #include "common.c"
 
 int main(int argc, char* argv[]) {
-	int s, puerto, bytes_enviados;
+	int puerto;
 	struct msg mensaje;
-	struct sockaddr_in canal;
 	struct hostent *nombre_local;
 
 	if (argc != 2) fatal("Uso: mutexloop <puerto>");
 
 	puerto = atoi(argv[1]);
 
-	s = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (s < 0) fatal("No se pudo crear el socket.");
-
-	nombre_local = gethostbyname("localhost");
-
-	memset(&canal, 0, sizeof(canal));
-	canal.sin_family = AF_INET;
-	memcpy(&canal.sin_addr.s_addr, nombre_local->h_addr,
-		nombre_local->h_length);
-	canal.sin_port = htons(puerto);
-
+	/* Inicializo las estructuras para la comunicación */
+	inicializar_servidor(puerto);
+	
 	mensaje.tipo = 45;
-	bytes_enviados = sendto(s, (void*)&mensaje, sizeof(mensaje), 0, (struct sockaddr*)&canal, sizeof(struct sockaddr_in));
-	if (bytes_enviados < 0)
-		fatal("Error al enviar mensaje.");
+	send_msg(mensaje, puerto);
 
-	close(s);
 	return 0;
 }
 
