@@ -122,6 +122,10 @@ int main(int argc, char* argv[]) {
 	if (argc != 2)
 		fatal("Uso: mutexd <puerto>");
 
+    /* Para usar la nueva funcion deje de utilizar "inicializada"
+     * Se podría reemplazar escribiendo una función "inicializarServer" dentro 
+     * de mutexd.c que llame a "inicializar" las veces necesarias y setee 
+     * "inicializada" en true. */
 	inicializada = FALSE;
 
 	puerto = atoi(argv[1]);
