@@ -27,6 +27,12 @@ El archivo de configuración tiene la siguiente estructura:
 
 \salida{../etc/mutex.cfg}
 
+\FIXME{Cuando lo encuentra, revisa si el valor correspondiente en la segunda columna
+es un número natural, correspondiente a un puerto, y de ser así sabe que a
+traves de ese puerto puede comunicarse con su \emph{holder}.
+Directamente al holder?. A self y holder les asigné el puerto, cosa e enviar directo
+el mensaje. Recuerden que solo debe enviarse al vecino}
+
 Cuando un proceso \proceso{mutexd} lee el archivo de configuración en busca de
 su \emph{holder}, utilizando \emph{numeroPuerto}, lo hace revisando la primer
 columna del mismo\footnote{Las columnas se separan con un espacio en blanco.}.
@@ -55,7 +61,8 @@ informándoselo al servidor.
 
 Los mensajes de comunicación son los siguientes:
 
-\TODO{Revisar si los mensajes son correctos}
+\TODO{Revisar si los mensajes son correctos.  Revisé. Cambié un nombre
+de acuerdo al código. Elijan el que les parezca más adecuado.}
 \begin{itemize}
 
 \item \textbf{REQUEST}: Es utilizado tanto por los servidores para el
@@ -76,9 +83,12 @@ servidor \textsl{j}. Tercero, que luego de recibido el mensaje, el servidor
 \textsl{j} será el que actualmente tenga el token, y cuarto, el \emph{HOLDER}
 del servidor \textsl{i} será \textsl{j}.
 
-\item \textbf{RELEASE}: Es utilizado únicamente por el cliente, y esta siempre
+\item \textbf{SALIR_RC}: Es utilizado únicamente por el cliente, y esta siempre
 dirigido a su correspondiente servidor. Sirve para indicarle que ha terminado
-de trabajar sobre la región crítica y desea liberarla.
+de trabajar sobre la región crítica y desea liberar.
+
+\item \textbf{ENTRAR_RC}: Unicamente utilizado por el clietne para pedir
+acceso exclusivo a la región crítica.
 
 \end{itemize}
 
