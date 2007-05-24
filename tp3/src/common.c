@@ -1,4 +1,4 @@
-#include "common.h"
+﻿#include "common.h"
 
 void fatal(string mensaje) {
 	fprintf(stderr, "%s\n", mensaje);

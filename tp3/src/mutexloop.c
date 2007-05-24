@@ -1,4 +1,4 @@
-/*
+﻿/*
 
   Copyright (c) 2007 by Luis I. Larrateguy, Milton Pividori y
   César Sandrigo. All Rights Reserved
