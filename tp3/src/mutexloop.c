@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
 	/* Inicializo las estructuras para la comunicación */
 	inicializar_servidor(puerto);
 	
-	mensaje.tipo = 45;
+	mensaje.tipo = ENTRAR_RC;
+	mensaje.from = MiPuerto;
 	send_msg(mensaje, puerto);
 	
 	while(TRUE)	{
