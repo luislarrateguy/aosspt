@@ -1,4 +1,4 @@
-﻿#ifndef _common_h
+#ifndef _common_h
 
 #include <stdio.h>
 #include <stdlib.h>

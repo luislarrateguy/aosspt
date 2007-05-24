@@ -1,4 +1,4 @@
-﻿/*
+/*
 
   Copyright (c) 2007 by Luis I. Larrateguy, Milton Pividori y
   César Sandrigo. All Rights Reserved
@@ -142,11 +142,7 @@ int main(int argc, char* argv[]) {
 		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
 		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
 
-<<<<<<< .mine
-		/* TODO: Gestión de la región crítica  e implementación del
-=======
 		/* TODO: Gestión de la región crótica  e implementación del
->>>>>>> .r90
  		 * algoritmo de Raymond. 
 		 * Comenzado! */
 			
