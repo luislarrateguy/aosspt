@@ -31,11 +31,11 @@ struct msg {
 int sock;
 struct sockaddr_in canal_recepcion;
 struct sockaddr_in canal_envio;
-socklen_t len_canal_recepcion;
+socklen_t len_canal;
 bool inicializada;
 
 void fatal(char* mensaje);
-void inicializar_servidor(int puerto);
+void inicializar(struct sockaddr_in *canal, int puerto, bool any);
 void send_msg(struct msg mensaje, int puerto_destino);
 void receive_msg(struct msg* mensaje);
 

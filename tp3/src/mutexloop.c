@@ -30,39 +30,51 @@
 
 #define PUERTO_INICIAL 6001
 
-void entrar_rc(int puerto) {
+int puertoServer;
+int puertoLocal;
 
+void entrar_rc() {
+    struct msg mensajeEntrar,mensaje;
+	mensajeEntrar.tipo = ENTRAR_RC;
+	mensajeEntrar.from = puertoLocal;
+	send_msg(mensajeEntrar, puertoServer);
+	
+	/* Se bloquea hasta que reciba el msg.. o no?*/
+	receive_msg(&mensaje);
 }
 
 void salir_rc() {
-
+    struct msg mensaje;
+	mensaje.tipo = SALIR_RC;
+	mensaje.from = puertoLocal;
+	send_msg(mensaje, puertoServer);
 }
 
 int main(int argc, char* argv[]) {
-	int puerto;
-	struct msg mensaje;
 	struct hostent *nombre_local;
 
 	if (argc != 2) fatal("Uso: mutexloop <puerto>");
-
-	puerto = atoi(argv[1]);
+	
+	/* Podriamos definir que el puerto del cliente es el puerto asignado al 
+	 * servidor al que se conecta mas 1000 
+	 * Ej: #mutexloop 5001
+	 * usara el 6001 */
+	puertoServer = atoi(argv[1]);
+	puertoLocal  = puertoServer + 1000;
 
 	/* Inicializo las estructuras para la comunicación */
-	inicializar_servidor(puerto);
-	
-	mensaje.tipo = ENTRAR_RC;
-	mensaje.from = MiPuerto;
-	send_msg(mensaje, puerto);
+	inicializar(&canal_envio,puertoServer,FALSE);
+	inicializar(&canal_recepcion,puertoLocal,FALSE);
 	
 	while(TRUE)	{
 		printf("Estoy en la FUERA de la Región Crítica\n");
 		printf("Presionar una tecla para Ingresar a la RC...\n");
-		getc(); /* leer del teclado */
-		Entrar_RC();
+		getchar(); /* leer del teclado */
+		entrar_rc();
 		printf("Estoy en la DENTRO de la Región Crítica\n");
 		printf("Presionar una tecla para Salir de la RC...\n");
-		getc(); /* leer del teclado */
-		Salir_RC();
+		getchar(); /* leer del teclado */
+		salir_rc();
 	}
 	return 0;
 }

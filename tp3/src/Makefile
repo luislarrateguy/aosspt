@@ -8,7 +8,7 @@ mutexd: queue/queue.o common.o mutexd.o
 	$(CC) queue/queue.o common.o mutexd.o -o $@
 
 mutexloop: mutexloop.o
-	$(CC) mutexloop.o -o $@
+	$(CC) common.o mutexloop.o -o $@
 
 clean:
 	rm -f *.o queue/*.o mutexd mutexloop

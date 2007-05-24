@@ -127,13 +127,15 @@ int main(int argc, char* argv[]) {
 	puerto = atoi(argv[1]);
 
 	/* TODO: Se busca el puerto en el archivo de configuración, y
-
 	 * se halla el puerto del holder. */
 	/* self no debería ser modificado nunca. Indica el puerto del servidor
 	 * actual */
 	self = puerto;
 	
-	inicializar_servidor(puerto);
+	/* Inicializo las estructuras para la comunicación */
+	inicializar(&canal_recepcion,puerto,TRUE);
+	inicializar(&canal_envio,0,TRUE);
+
 
 	while (1) {
 
