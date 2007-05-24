@@ -25,6 +25,7 @@ typedef int bool;
 
 struct msg {
 	int tipo;
+	int from;
 };
 
 int sock;
