@@ -58,7 +58,7 @@ struct puertos leerPuertos () {
 		fatal("No se pudo abrir el archivo /etc/mutexd.conf\n");
 	
 	while (!feof(archivo) && (i < CANT_MUTEXD))  {
-		/* Leemos la linea */
+		/* Leemos la línea */
 		fgets(linea, TAM_LINEA, archivo);
 
 		/* Quito el fin de linea ('\n') de la línea leída */
@@ -83,7 +83,7 @@ struct puertos leerPuertos () {
 }
 
 void assignPrivilege() {
-	if( holder == self 
+	if(holder == self 
 		&& !using 
 		&& !IsEmpty(colaServers) ) {
 		struct msg mensaje;
@@ -103,8 +103,8 @@ void assignPrivilege() {
 }
 
 void makeRequest() {
-	if (holder != self 
-		&& !IsEmpty(colaServers) 
+	if (holder != self
+		&& !IsEmpty(colaServers)
 		&& !asked) {
 		struct msg mensaje;
 		mensaje.tipo = REQUEST;
@@ -125,7 +125,9 @@ int main(int argc, char* argv[]) {
 	inicializada = FALSE;
 
 	puerto = atoi(argv[1]);
+
 	/* TODO: Se busca el puerto en el archivo de configuración, y
+
 	 * se halla el puerto del holder. */
 	/* self no debería ser modificado nunca. Indica el puerto del servidor
 	 * actual */
@@ -140,7 +142,11 @@ int main(int argc, char* argv[]) {
 		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
 		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
 
+<<<<<<< .mine
+		/* TODO: Gestión de la región crítica  e implementación del
+=======
 		/* TODO: Gestión de la región crótica  e implementación del
+>>>>>>> .r90
  		 * algoritmo de Raymond. 
 		 * Comenzado! */
 			

@@ -26,7 +26,17 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#include "common.c"
+#include "common.h"
+
+#define PUERTO_INICIAL 6001
+
+void entrar_rc(int puerto) {
+
+}
+
+void salir_rc() {
+
+}
 
 int main(int argc, char* argv[]) {
 	int puerto;
