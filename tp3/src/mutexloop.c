@@ -42,7 +42,17 @@ int main(int argc, char* argv[]) {
 	
 	mensaje.tipo = 45;
 	send_msg(mensaje, puerto);
-
+	
+	while(TRUE)	{
+		printf("Estoy en la FUERA de la Región Crítica\n");
+		printf("Presionar una tecla para Ingresar a la RC...\n");
+		getc(); /* leer del teclado */
+		Entrar_RC();
+		printf("Estoy en la DENTRO de la Región Crítica\n");
+		printf("Presionar una tecla para Salir de la RC...\n");
+		getc(); /* leer del teclado */
+		Salir_RC();
+	}
 	return 0;
 }
 
