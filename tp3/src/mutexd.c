@@ -45,12 +45,12 @@ struct puertos {
 
 /* Retorna una estructura 'puertos' con el numero de puerto
  * de cada mutex y el de su padre, leidos del archivo 'mutex.cfg' */ 
-struct puertos leerPuertos () {
+struct puertos leerPuertos (struct puertos *resultado) {
 	FILE* archivo;
 	char linea[TAM_LINEA];
 	char* puerto;
 	char* puertoPadre;
-	struct puertos resultado;
+
 	int i = 0;
 
 	/* Abrimos el archivo */
@@ -68,8 +68,8 @@ struct puertos leerPuertos () {
 		puertoPadre = strtok(NULL, "\0");
 		
 		if (puerto != NULL && puertoPadre != NULL) {
-			resultado.puerto[i][0] = atoi(puerto);
-			resultado.puerto[i][1] = atoi(puertoPadre);
+			resultado->puerto[i][0] = atoi(puerto);
+			resultado->puerto[i][1] = atoi(puertoPadre);
 		}
 
 		i++;
@@ -78,10 +78,24 @@ struct puertos leerPuertos () {
 	/* Cerramos el archivo */
 	if (fclose(archivo) == EOF)
 		fatal("Error al cerrar el archivo\n");
-	
-	return resultado;
+		
 }
-
+int obtenerHolder() {
+	/* Aca intento leer el puerto del holder */
+    struct puertos lista;
+    leerPuertos(&lista);
+    int i = 0;
+    int h;
+    
+    while((i<CANT_MUTEXD) && (lista.puerto[i][0] != self)) {
+        h = lista.puerto[i][1];
+        i++;
+    }
+    if (i == CANT_MUTEXD) {
+        fatal("No se encontró el puerto actual en la lista\n");
+    }
+    return h;
+}
 void assignPrivilege() {
 	if(holder == self 
 		&& !using 
@@ -116,7 +130,7 @@ void makeRequest() {
 
 int main(int argc, char* argv[]) {
 	int puerto;
-
+    colaServers = CreateQueue(7);
 	struct msg mensaje;
 
 	if (argc != 2)
@@ -129,26 +143,25 @@ int main(int argc, char* argv[]) {
 	inicializada = FALSE;
 
 	puerto = atoi(argv[1]);
-
 	/* TODO: Se busca el puerto en el archivo de configuración, y
 	 * se halla el puerto del holder. */
 	/* self no debería ser modificado nunca. Indica el puerto del servidor
 	 * actual */
 	self = puerto;
+	holder = obtenerHolder();
 	
 	/* Inicializo las estructuras para la comunicación */
 	inicializar(&canal_recepcion,puerto,TRUE);
 	inicializar(&canal_envio,0,TRUE);
 
 
-	while (1) {
-
+	while (TRUE) {
 		receive_msg(&mensaje);
 		
 		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
 		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
 
-		/* TODO: Gestión de la región crótica  e implementación del
+		/* TODO: Gestión de la región crítica  e implementación del
  		 * algoritmo de Raymond. 
 		 * Comenzado! */
 			
@@ -169,5 +182,6 @@ int main(int argc, char* argv[]) {
 		assignPrivilege();
 		makeRequest();
 	}
+	DisposeQueue(colaServers);
 }
 

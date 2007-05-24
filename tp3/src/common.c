@@ -16,7 +16,7 @@ void inicializar(struct sockaddr_in *canal, int puerto, bool any) {
 
 
 	/* Inicializo el canal */
-	memset(&canal, 0, sizeof(*canal));
+	memset(canal, 0, sizeof(*canal));
    	canal->sin_family = AF_INET;
    	canal->sin_port = htons(puerto);
 
