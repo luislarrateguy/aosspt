@@ -62,10 +62,11 @@ int main(int argc, char* argv[]) {
 
 	if (argc != 2) fatal("Uso: mutexloop <puerto>");
 	
-	/* Podriamos definir que el puerto del cliente es el puerto asignado al 
-	 * servidor al que se conecta mas 1000 
-	 * Ej: #mutexloop 5001
-	 * usara el 6001 */
+	/* El puerto que utiliza el cliente para escuchar las respuestas
+	 * de su mutexd es el mismo que el servidor más 1000. De esta forma
+	 * cada servidor y cada cliente utilizan un puerto distinto (recordar
+	 * que están en la misma máquina) para escuchar los mensajes de los
+	 * demás hacia él. */
 	puertoServer = atoi(argv[1]);
 	puertoLocal  = puertoServer + 1000;
 
@@ -73,14 +74,17 @@ int main(int argc, char* argv[]) {
 	inicializar_cliente();
 	
 	while(TRUE)	{
-		printf("Estoy en la FUERA de la Región Crítica\n");
+		printf("Estoy FUERA de la Región Crítica\n");
 		printf("Presionar una tecla para Ingresar a la RC...\n");
 		
 		/* Entra a la región crítica */
 		getchar(); /* lee del teclado */
+		printf("Intentando entrar a la región crítica...");
+		fflush(stdout);
 		entrar_rc();
+		printf(" ¡Conseguido!\n");
 
-		printf("Estoy en la DENTRO de la Región Crítica\n");
+		printf("Estoy DENTRO de la Región Crítica\n");
 		printf("Presionar una tecla para Salir de la RC...\n");
 
 		/* Sale de la región crítica */

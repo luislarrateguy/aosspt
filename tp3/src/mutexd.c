@@ -176,6 +176,9 @@ int main(int argc, char* argv[]) {
 
 	printf("Conexiones inicializadas\n\n");
 
+	/* TODO: Espera de todos los servidores UP.
+	 * Posible implementacion: a las espera de 7 HELLO. Un simple contador */
+
 	while (TRUE) {
 		receive_msg(&mensaje);
 		
@@ -183,17 +186,17 @@ int main(int argc, char* argv[]) {
 		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
 		printf("Tipo del mensaje recibido: %s\n\n", nombre_mensajes[mensaje.tipo]);
 
-		/* TODO: Espera de todos los servidores UP.
-		 * Posible implementacion: a las espera de 7 HELLO. Un simple contador 
-		 */
-
 		if (mensaje.tipo == ENTRAR_RC) {
 			debug("Pide entrar en la region crítica mi cliente");
 			cliente = mensaje.from;
 			Enqueue(self,colaServers);
 		}
 		else if (mensaje.tipo == REQUEST) {
-			debug("Pide un vecino el TOKEN");
+			if (!using)
+				debug("Pide un vecino el TOKEN");
+			else
+				debug("Pide un vecino el TOKEN, pero lo estoy usando. Tiene que esperar");
+
 			Enqueue(mensaje.from,colaServers);
 		}
 		else if (mensaje.tipo == PRIVILEGE) {
