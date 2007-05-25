@@ -83,27 +83,27 @@ struct puertos leerPuertos (struct puertos *resultado) {
 }
 int obtenerHolder() {
 	/* Aca intento leer el puerto del holder */
-    struct puertos lista;
-    leerPuertos(&lista);
-    int i = 0;
-    int h = -1;
-    
-    while((i<CANT_MUTEXD) && (lista.puerto[i][0] != self)) {
-        i++;
-    }
-    if (i == CANT_MUTEXD) {
-        fatal("No se encontró el puerto actual en la lista\n");
-    } else {
-        if (lista.puerto[i][1] == 0) 
-            h = self;
-        else 
-            h = lista.puerto[i][1];
-    }
-    return h;
+	struct puertos lista;
+	leerPuertos(&lista);
+	int i = 0;
+	int h = -1;
+	
+	while((i<CANT_MUTEXD) && (lista.puerto[i][0] != self)) {
+		i++;
+	}
+	if (i == CANT_MUTEXD) {
+		fatal("No se encontró el puerto actual en la lista\n");
+	} else {
+		if (lista.puerto[i][1] == 0) 
+			h = self;
+		else 
+			h = lista.puerto[i][1];
+	}
+	return h;
 }
 void inicializar_servidor(int puerto) {
-	inicializar(&canal_recepcion,puerto,TRUE,FALSE);
-	inicializar(&canal_envio,0,TRUE,TRUE);
+	skr = inicializar(&canal_recepcion,puerto,TRUE,FALSE);
+	skw = inicializar(&canal_envio,0,TRUE,TRUE);
 	inicializada = TRUE;
 }
 void assignPrivilege() {
@@ -118,11 +118,11 @@ void assignPrivilege() {
 		asked = FALSE;
 
 		if (holder == self) {
-    		debug("Tengo el poder. Ahora se lo mando al cliente");
+			debug("Tengo el poder. Ahora se lo mando al cliente");
 			using = TRUE;
 			send_msg(mensaje, cliente);
 		} else {
-    		debug("Tengo el poder. Pero es para otro. Se lo mando.");
+			debug("Tengo el poder. Pero es para otro. Se lo mando.");
 			send_msg(mensaje, holder);
 		}
 	}
@@ -153,13 +153,12 @@ int main(int argc, char* argv[]) {
 	inicializada = FALSE;
 
 	puerto = atoi(argv[1]);
+	/* Hacer volar si no vamos a usar el debugging */
 	if ((argc == 3) && (atoi(argv[2]) == 0))
 		debugging = FALSE;
 	else 
 		debugging = TRUE;
-    	
-	/* TODO: Se busca el puerto en el archivo de configuración, y
-	 * se halla el puerto del holder. */
+
 	/* self no debería ser modificado nunca. Indica el puerto del servidor
 	 * actual */
 	self = puerto;
@@ -179,25 +178,25 @@ int main(int argc, char* argv[]) {
 		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
 		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
 
-		/* TODO: Gestión de la región crítica  e implementación del
- 		 * algoritmo de Raymond. 
-		 * Comenzado! */
+		/* TODO: Espera de todos los servidores UP.
+		 * Posible implementacion: a las espera de 7 HELLO. Un simple contador 
+		 */
 			
 		if (mensaje.tipo == ENTRAR_RC) {
-		    debug("Pide entrar en la region crítica mi cliente");
+			debug("Pide entrar en la region crítica mi cliente");
 			cliente = mensaje.from;
 			Enqueue(self,colaServers);
 		}
 		if (mensaje.tipo == REQUEST) {
-		    debug("Pide un vecino el TOKEN");
+			debug("Pide un vecino el TOKEN");
 			Enqueue(mensaje.from,colaServers);
 		}
 		if (mensaje.tipo == PRIVILEGE) {
-    		debug("Me ha llegado un TOKEN");
+			debug("Me ha llegado un TOKEN");
 			holder = self;
 		}
 		if (mensaje.tipo == SALIR_RC) {
-       		debug("El cliente libero la region crítica");
+	   		debug("El cliente libero la region crítica");
 			using = FALSE;
 			cliente = -1;
 		}
@@ -205,5 +204,6 @@ int main(int argc, char* argv[]) {
 		makeRequest();
 	}
 	DisposeQueue(colaServers);
+	/* TODO: cerrar los sockets skw skr */
 }
 

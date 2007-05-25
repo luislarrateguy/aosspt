@@ -33,12 +33,12 @@
 int puertoServer;
 int puertoLocal;
 void inicializar_cliente() {
-	inicializar(&canal_recepcion,puertoLocal,FALSE,FALSE);
-	inicializar(&canal_envio,puertoServer,FALSE,TRUE);
+	skr = inicializar(&canal_recepcion,puertoLocal,FALSE,FALSE);
+	skw = inicializar(&canal_envio,puertoServer,FALSE,TRUE);
 	inicializada = TRUE;
 }
 void entrar_rc() {
-    struct msg mensajeEntrar,mensaje;
+	struct msg mensajeEntrar,mensaje;
 	mensajeEntrar.tipo = ENTRAR_RC;
 	mensajeEntrar.from = puertoLocal;
 	send_msg(mensajeEntrar, puertoServer);
@@ -48,7 +48,7 @@ void entrar_rc() {
 }
 
 void salir_rc() {
-    struct msg mensaje;
+	struct msg mensaje;
 	mensaje.tipo = SALIR_RC;
 	mensaje.from = puertoLocal;
 	send_msg(mensaje, puertoServer);
@@ -80,5 +80,6 @@ int main(int argc, char* argv[]) {
 		salir_rc();
 	}
 	return 0;
+	/* TODO: cerrar los sockets */
 }
 

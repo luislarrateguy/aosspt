@@ -12,11 +12,11 @@
 #define TAM_LINEA 81
 
 /* Códigos de los distintos tipos de mensajes */
-#define REQUEST     1
+#define REQUEST	 1
 #define ENTRAR_RC   2
 #define PRIVILEGE   3
-#define SALIR_RC    4
-#define HELLO       5
+#define SALIR_RC	4
+#define HELLO	   5
 
 #define FALSE 0
 #define TRUE 1
@@ -29,7 +29,7 @@ struct msg {
 	int from;
 };
 
-int sock;
+int skr,skw;
 struct sockaddr_in canal_recepcion;
 struct sockaddr_in canal_envio;
 socklen_t len_canal;
@@ -38,7 +38,7 @@ bool debugging;
 
 void fatal(string mensaje);
 void debug(string mensaje);
-void inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio);
+int inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio);
 void send_msg(struct msg mensaje, int puerto_destino);
 void receive_msg(struct msg* mensaje);
 
