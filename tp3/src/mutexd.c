@@ -168,45 +168,53 @@ int main(int argc, char* argv[]) {
 	self = puerto;
 	holder = obtenerHolder();
 	
-	fprintf(stderr,"Mi puerto: %d\n",self);
-	fprintf(stderr,"El holder: %d\n",holder);
+	printf("Mi puerto: %d\n",self);
+	printf("El holder: %d\n",holder);
 	
 	/* Inicializo las estructuras para la comunicación */
 	inicializar_servidor(puerto);
-	
-	fprintf(stderr,"Conexiones inicializadas\n");
+
+	printf("Conexiones inicializadas\n\n");
 
 	while (TRUE) {
 		receive_msg(&mensaje);
 		
+		printf("------\n");
 		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
-		printf("Tipo del mensaje recibido: %d\n\n", mensaje.tipo);
+		printf("Tipo del mensaje recibido: %s\n\n", nombre_mensajes[mensaje.tipo]);
 
 		/* TODO: Espera de todos los servidores UP.
 		 * Posible implementacion: a las espera de 7 HELLO. Un simple contador 
 		 */
-			
+
 		if (mensaje.tipo == ENTRAR_RC) {
 			debug("Pide entrar en la region crítica mi cliente");
 			cliente = mensaje.from;
 			Enqueue(self,colaServers);
 		}
-		if (mensaje.tipo == REQUEST) {
+		else if (mensaje.tipo == REQUEST) {
 			debug("Pide un vecino el TOKEN");
 			Enqueue(mensaje.from,colaServers);
 		}
-		if (mensaje.tipo == PRIVILEGE) {
+		else if (mensaje.tipo == PRIVILEGE) {
 			debug("Me ha llegado un TOKEN");
 			holder = self;
 		}
-		if (mensaje.tipo == SALIR_RC) {
+		else if (mensaje.tipo == SALIR_RC) {
 	   		debug("El cliente libero la region crítica");
 			using = FALSE;
 			cliente = -1;
 		}
+		else if (mensaje.tipo == HELLO) {
+			/* No implementado aún */
+		}
+
 		assignPrivilege();
 		makeRequest();
+
+		printf("------\n\n");
 	}
+
 	DisposeQueue(colaServers);
 	/* TODO: cerrar los sockets skw skr */
 }

@@ -30,20 +30,23 @@
 
 #define PUERTO_INICIAL 6001
 
+/* Variables globales del cliente */
 int puertoServer;
 int puertoLocal;
+
 void inicializar_cliente() {
 	skr = inicializar(&canal_recepcion,puertoLocal,FALSE,FALSE);
 	skw = inicializar(&canal_envio,puertoServer,FALSE,TRUE);
 	inicializada = TRUE;
 }
+
 void entrar_rc() {
 	struct msg mensajeEntrar,mensaje;
 	mensajeEntrar.tipo = ENTRAR_RC;
 	mensajeEntrar.from = puertoLocal;
 	send_msg(mensajeEntrar, puertoServer);
 	
-	/* Se bloquea hasta que reciba el msg.. o no?*/
+	/* Se bloquea hasta que reciba el msg */
 	receive_msg(&mensaje);
 }
 
@@ -72,14 +75,21 @@ int main(int argc, char* argv[]) {
 	while(TRUE)	{
 		printf("Estoy en la FUERA de la Región Crítica\n");
 		printf("Presionar una tecla para Ingresar a la RC...\n");
-		getchar(); /* leer del teclado */
+		
+		/* Entra a la región crítica */
+		getchar(); /* lee del teclado */
 		entrar_rc();
+
 		printf("Estoy en la DENTRO de la Región Crítica\n");
 		printf("Presionar una tecla para Salir de la RC...\n");
-		getchar(); /* leer del teclado */
+
+		/* Sale de la región crítica */
+		getchar(); /* lee del teclado */
 		salir_rc();
 	}
-	return 0;
+
 	/* TODO: cerrar los sockets */
+
+	return 0;
 }
 

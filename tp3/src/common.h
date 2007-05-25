@@ -33,14 +33,16 @@
 #define TAM_LINEA 81
 
 /* Códigos de los distintos tipos de mensajes */
-#define REQUEST	 1
-#define ENTRAR_RC   2
-#define PRIVILEGE   3
-#define SALIR_RC	4
-#define HELLO	   5
+#define REQUEST		0
+#define ENTRAR_RC	1
+#define PRIVILEGE	2
+#define SALIR_RC	3
+#define HELLO		4
 
-#define FALSE 0
-#define TRUE 1
+char* nombre_mensajes[5];
+
+#define FALSE		0
+#define TRUE		1
 
 typedef char* string;
 typedef int bool;

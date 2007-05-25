@@ -25,17 +25,26 @@ void fatal(string mensaje) {
 	fprintf(stderr, "%s\n", mensaje);
 	exit(1);
 }
+
 void debug(string mensaje) {
 	if (debugging)
-		fprintf(stdout, "%s\n", mensaje);   
+		printf("%s\n", mensaje);   
 }
 
 int inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
-	int b;
+	int b, sk;
 	struct hostent* nombre_local = gethostbyname("localhost");
 
+	/* Inicializo el array de nombres de los mensajes, para mostrar éstos
+	 * en lugar de sus números de identificación */
+	nombre_mensajes[0] = "REQUEST";
+	nombre_mensajes[1] = "ENTRAR_RC";
+	nombre_mensajes[2] = "PRIVILEGE";
+	nombre_mensajes[3] = "SALIR_RC";
+	nombre_mensajes[4] = "HELLO";
+
 	/* Creo el socket */
-	int sk = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	sk = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (sk < 0)
 		fatal("inicializar: No se pudo crear el socket.");
 
