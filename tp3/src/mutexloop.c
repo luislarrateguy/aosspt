@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 	puertoLocal  = puertoServer + 1000;
 
 	/* Inicializo las estructuras para la comunicación */
-    inicializar_cliente();
+	inicializar_cliente();
 	
 	while(TRUE)	{
 		printf("Estoy en la FUERA de la Región Crítica\n");

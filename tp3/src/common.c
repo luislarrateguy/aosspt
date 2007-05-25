@@ -18,23 +18,23 @@ void inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
 	if (sock < 0)
 		fatal("inicializar: No se pudo crear el socket.");
 
-
 	/* Inicializo el canal */
 	memset(canal, 0, sizeof(*canal));
    	canal->sin_family = AF_INET;
    	canal->sin_port = htons(puerto);
 
-    /* canal que puede recibir/enviar de cualquiera */
-    if (!envio) {
-        canal->sin_addr.s_addr = htonl(INADDR_ANY);
-        b = bind(sock, (struct sockaddr*) canal,
-    	    sizeof(*canal));
-    	if (b < 0) 
-    	    fatal("Error al ejecutar bind.");
-    } else {
-        memcpy(&canal->sin_addr.s_addr, nombre_local->h_addr,
-    	nombre_local->h_length);
-    }
+	/* canal que puede recibir/enviar de cualquiera */
+	if (!envio) {
+		canal->sin_addr.s_addr = htonl(INADDR_ANY);
+		b = bind(sock, (struct sockaddr*) canal,
+			sizeof(*canal));
+		if (b < 0) 
+			fatal("Error al ejecutar bind.");
+	} else {
+		memcpy(&canal->sin_addr.s_addr, nombre_local->h_addr,
+			nombre_local->h_length);
+	}
+
 	len_canal = sizeof(*canal);
 }
 

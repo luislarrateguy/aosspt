@@ -7,7 +7,7 @@ all: mutexd mutexloop
 mutexd: queue/queue.o common.o mutexd.o
 	$(CC) queue/queue.o common.o mutexd.o -o $@
 
-mutexloop: mutexloop.o
+mutexloop: mutexloop.o common.o
 	$(CC) common.o mutexloop.o -o $@
 
 clean:

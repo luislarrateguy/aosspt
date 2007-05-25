@@ -36,7 +36,6 @@ int self,holder,cliente;
 bool asked, using = FALSE;
 Queue colaServers;
 
-
 /* Estructura utilizada para retornar la configuración
  * de puertos leída en la función 'leerPuertos'. En la
  * primer columna de la matriz está el puerto del mutex
@@ -145,7 +144,7 @@ void makeRequest() {
 
 int main(int argc, char* argv[]) {
 	int puerto;
-    colaServers = CreateQueue(7);
+	colaServers = CreateQueue(7);
 	struct msg mensaje;
 
 	if (argc < 2)
@@ -155,9 +154,9 @@ int main(int argc, char* argv[]) {
 
 	puerto = atoi(argv[1]);
 	if ((argc == 3) && (atoi(argv[2]) == 0))
-    	debugging = FALSE;
-    else 
-        debugging = TRUE;
+		debugging = FALSE;
+	else 
+		debugging = TRUE;
     	
 	/* TODO: Se busca el puerto en el archivo de configuración, y
 	 * se halla el puerto del holder. */
@@ -167,7 +166,7 @@ int main(int argc, char* argv[]) {
 	holder = obtenerHolder();
 	
 	fprintf(stderr,"Mi puerto: %d\n",self);
-    fprintf(stderr,"El holder: %d\n",holder);
+	fprintf(stderr,"El holder: %d\n",holder);
 	
 	/* Inicializo las estructuras para la comunicación */
 	inicializar_servidor(puerto);
