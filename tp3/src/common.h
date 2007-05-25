@@ -34,6 +34,7 @@ struct sockaddr_in canal_recepcion;
 struct sockaddr_in canal_envio;
 socklen_t len_canal;
 bool inicializada;
+bool debugging;
 
 void fatal(string mensaje);
 void debug(string mensaje);

@@ -25,21 +25,17 @@ void inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
    	canal->sin_port = htons(puerto);
 
     /* canal que puede recibir/enviar de cualquiera */
-	if (any) {
-	    canal->sin_addr.s_addr = htonl(INADDR_ANY);
-    } else {
-    	memcpy(&canal->sin_addr.s_addr, nombre_local->h_addr,
-    		nombre_local->h_length);   
-    }
-    
     if (!envio) {
-    	b = bind(sock, (struct sockaddr*) canal,
-    		sizeof(*canal));
-    	if (b < 0) fatal("Error al ejecutar bind.");
-	}
-
+        canal->sin_addr.s_addr = htonl(INADDR_ANY);
+        b = bind(sock, (struct sockaddr*) canal,
+    	    sizeof(*canal));
+    	if (b < 0) 
+    	    fatal("Error al ejecutar bind.");
+    } else {
+        memcpy(&canal->sin_addr.s_addr, nombre_local->h_addr,
+    	nombre_local->h_length);
+    }
 	len_canal = sizeof(*canal);
-
 }
 
 void send_msg(struct msg mensaje, int puerto_destino) {

@@ -22,16 +22,18 @@
 
 #include "queue/queue.h"
 #include "common.h"
+#include <stdio.h>
 
 #define RUTA_MUTEX_CNF "../etc/mutex.cfg"
 #define CANT_MUTEXD 7
 
 /***** Variables Globales a las funciones *******/
 /* nacho: si les parece metanlas en otro lado, common.c por ejemplo
- * milton: para mi esta bien que estén acá, porque son propias del mutexd */
+ * milton: para mi esta bien que estén acá, porque son propias del mutexd 
+ * pessolani: esta genial que las dejen aca. Muy bien. Sigan asi. */
 
 int self,holder,cliente;
-bool asked, using;
+bool asked, using = FALSE;
 Queue colaServers;
 
 
@@ -85,14 +87,18 @@ int obtenerHolder() {
     struct puertos lista;
     leerPuertos(&lista);
     int i = 0;
-    int h;
+    int h = -1;
     
     while((i<CANT_MUTEXD) && (lista.puerto[i][0] != self)) {
-        h = lista.puerto[i][1];
         i++;
     }
     if (i == CANT_MUTEXD) {
         fatal("No se encontró el puerto actual en la lista\n");
+    } else {
+        if (lista.puerto[i][1] == 0) 
+            h = self;
+        else 
+            h = lista.puerto[i][1];
     }
     return h;
 }
@@ -113,9 +119,11 @@ void assignPrivilege() {
 		asked = FALSE;
 
 		if (holder == self) {
+    		debug("Tengo el poder. Ahora se lo mando al cliente");
 			using = TRUE;
 			send_msg(mensaje, cliente);
 		} else {
+    		debug("Tengo el poder. Pero es para otro. Se lo mando.");
 			send_msg(mensaje, holder);
 		}
 	}
@@ -125,6 +133,8 @@ void makeRequest() {
 	if (holder != self
 		&& !IsEmpty(colaServers)
 		&& !asked) {
+		
+		debug("Haciendo un REQUEST por token");
 		struct msg mensaje;
 		mensaje.tipo = REQUEST;
 		mensaje.from = self;
@@ -138,18 +148,27 @@ int main(int argc, char* argv[]) {
     colaServers = CreateQueue(7);
 	struct msg mensaje;
 
-	if (argc != 2)
-		fatal("Uso: mutexd <puerto>");
+	if (argc < 2)
+		fatal("Uso: mutexd <puerto> [0]\n  Usando [0] desactiva el debugging");
 
 	inicializada = FALSE;
 
 	puerto = atoi(argv[1]);
+	if ((argc == 3) && (atoi(argv[2]) == 0))
+    	debugging = FALSE;
+    else 
+        debugging = TRUE;
+    	
 	/* TODO: Se busca el puerto en el archivo de configuración, y
 	 * se halla el puerto del holder. */
 	/* self no debería ser modificado nunca. Indica el puerto del servidor
 	 * actual */
 	self = puerto;
 	holder = obtenerHolder();
+	
+	fprintf(stderr,"Mi puerto: %d\n",self);
+    fprintf(stderr,"El holder: %d\n",holder);
+
 	
 	/* Inicializo las estructuras para la comunicación */
 	inicializar_servidor(puerto);
@@ -165,16 +184,20 @@ int main(int argc, char* argv[]) {
 		 * Comenzado! */
 			
 		if (mensaje.tipo == ENTRAR_RC) {
+		    debug("Pide entrar en la region crítica mi cliente");
 			cliente = mensaje.from;
 			Enqueue(self,colaServers);
 		}
 		if (mensaje.tipo == REQUEST) {
+		    debug("Pide un vecino el TOKEN");
 			Enqueue(mensaje.from,colaServers);
 		}
 		if (mensaje.tipo == PRIVILEGE) {
+    		debug("Me ha llegado un TOKEN");
 			holder = self;
 		}
 		if (mensaje.tipo == SALIR_RC) {
+       		debug("El cliente libero la region crítica");
 			using = FALSE;
 			cliente = -1;
 		}
