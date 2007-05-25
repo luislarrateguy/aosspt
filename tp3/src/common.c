@@ -1,3 +1,24 @@
+/*
+
+  Copyright (c) 2007 by Luis I. Larrateguy, Milton Pividori y
+  César Sandrigo. All Rights Reserved
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+*/
+
 #include "common.h"
 
 void fatal(string mensaje) {
@@ -29,7 +50,7 @@ int inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
 		b = bind(sk, (struct sockaddr*) canal,
 			sizeof(*canal));
 		if (b < 0) 
-			fatal("Error al ejecutar bind.");
+			fatal("inicializar: Error al ejecutar bind.");
 	} else {
 		memcpy(&canal->sin_addr.s_addr, nombre_local->h_addr,
 		nombre_local->h_length);
@@ -41,7 +62,7 @@ int inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
 
 void send_msg(struct msg mensaje, int puerto_destino) {
 	if (!inicializada)
-		fatal("send: conexión no inicializada aún.");
+		fatal("send_msg: conexión no inicializada aún.");
 
 	canal_envio.sin_port = htons(puerto_destino);
 
@@ -54,7 +75,7 @@ void send_msg(struct msg mensaje, int puerto_destino) {
 
 void receive_msg(struct msg* mensaje) {
 	if (!inicializada)
-		fatal("receive: conexión no inicializada aún.");
+		fatal("receive_msg: conexión no inicializada aún.");
 
 	if (recvfrom(skr, (void *)mensaje, sizeof(*mensaje), 0,
 			(struct sockaddr*)&canal_recepcion,

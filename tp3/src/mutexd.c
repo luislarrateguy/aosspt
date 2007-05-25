@@ -19,19 +19,14 @@
 
 */
 
-
 #include "queue/queue.h"
 #include "common.h"
 #include <stdio.h>
 
-#define RUTA_MUTEX_CNF "../etc/mutex.cfg"
+#define RUTA_MUTEX_CFG "../etc/mutex.cfg"
 #define CANT_MUTEXD 7
 
-/***** Variables Globales a las funciones *******/
-/* nacho: si les parece metanlas en otro lado, common.c por ejemplo
- * milton: para mi esta bien que estén acá, porque son propias del mutexd 
- * pessolani: esta genial que las dejen aca. Muy bien. Sigan asi. */
-
+/* Variables Globales a las funciones */
 int self,holder,cliente;
 bool asked, using = FALSE;
 Queue colaServers;
@@ -55,8 +50,16 @@ struct puertos leerPuertos (struct puertos *resultado) {
 	int i = 0;
 
 	/* Abrimos el archivo */
-	if ((archivo = fopen(RUTA_MUTEX_CNF, "r")) == NULL)
-		fatal("No se pudo abrir el archivo /etc/mutexd.conf\n");
+	if ((archivo = fopen(RUTA_MUTEX_CFG, "r")) == NULL) {
+		char mensaje_error[60];
+		mensaje_error[0] = '\0';
+
+		strcat(mensaje_error, "No se pudo abrir el archivo ");
+		strcat(mensaje_error, RUTA_MUTEX_CFG);
+		strcat(mensaje_error, "\n");
+
+		fatal(mensaje_error);
+	}
 	
 	while (!feof(archivo) && (i < CANT_MUTEXD))  {
 		/* Leemos la línea */
@@ -79,8 +82,8 @@ struct puertos leerPuertos (struct puertos *resultado) {
 	/* Cerramos el archivo */
 	if (fclose(archivo) == EOF)
 		fatal("Error al cerrar el archivo\n");
-		
 }
+
 int obtenerHolder() {
 	/* Aca intento leer el puerto del holder */
 	struct puertos lista;
@@ -102,14 +105,15 @@ int obtenerHolder() {
 	return h;
 }
 void inicializar_servidor(int puerto) {
-	skr = inicializar(&canal_recepcion,puerto,TRUE,FALSE);
-	skw = inicializar(&canal_envio,0,TRUE,TRUE);
+	skr = inicializar(&canal_recepcion, puerto, TRUE, FALSE);
+	skw = inicializar(&canal_envio, 0, TRUE, TRUE);
 	inicializada = TRUE;
 }
 void assignPrivilege() {
 	if(holder == self 
 		&& !using 
 		&& !IsEmpty(colaServers) ) {
+
 		struct msg mensaje;
 		mensaje.tipo = PRIVILEGE;
 		mensaje.from = self;
