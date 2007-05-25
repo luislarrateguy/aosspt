@@ -77,11 +77,13 @@ void send_msg(struct msg mensaje, int puerto_destino) {
 
 	if (sendto(skw, (void*)&mensaje, sizeof(mensaje), 0,
 		(struct sockaddr*)&canal_envio, sizeof(struct sockaddr_in)) < 0)
-		fatal("send_msg: Error al enviar mensaje.");
+		fatal("send_msg: Error al enviar el mensaje");
 
 	return;
 }
 
+/* Es semejante a send_msg. Si la recepción del datagrama falla, entonces
+ * muestra un mensaje por consola con la función fatal */
 void receive_msg(struct msg* mensaje) {
 	if (!inicializada)
 		fatal("receive_msg: conexión no inicializada aún.");
@@ -89,7 +91,7 @@ void receive_msg(struct msg* mensaje) {
 	if (recvfrom(skr, (void *)mensaje, sizeof(*mensaje), 0,
 			(struct sockaddr*)&canal_recepcion,
 			&len_canal) < 0)
-		fatal("receive_msg: Error en recvfrom.");
+		fatal("receive_msg: Error al recibir el mensaje");
 
 	return;
 }

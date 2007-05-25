@@ -30,6 +30,7 @@
 int self,holder,cliente;
 bool asked, using = FALSE;
 Queue colaServers;
+struct puertos servidores;
 
 /* Estructura utilizada para retornar la configuración
  * de puertos leída en la función 'leerPuertos'. En la
@@ -41,7 +42,7 @@ struct puertos {
 
 /* Retorna una estructura 'puertos' con el numero de puerto
  * de cada mutex y el de su padre, leidos del archivo 'mutex.cfg' */ 
-struct puertos leerPuertos (struct puertos *resultado) {
+void leerPuertos (struct puertos *resultado) {
 	FILE* archivo;
 	char linea[TAM_LINEA];
 	char* puerto;
@@ -86,29 +87,30 @@ struct puertos leerPuertos (struct puertos *resultado) {
 
 int obtenerHolder() {
 	/* Aca intento leer el puerto del holder */
-	struct puertos lista;
-	leerPuertos(&lista);
+	leerPuertos(&servidores);
 	int i = 0;
 	int h = -1;
 	
-	while((i<CANT_MUTEXD) && (lista.puerto[i][0] != self)) {
+	while((i<CANT_MUTEXD) && (servidores.puerto[i][0] != self)) {
 		i++;
 	}
 	if (i == CANT_MUTEXD) {
 		fatal("No se encontró el puerto actual en la lista\n");
 	} else {
-		if (lista.puerto[i][1] == 0) 
+		if (servidores.puerto[i][1] == 0) 
 			h = self;
 		else 
-			h = lista.puerto[i][1];
+			h = servidores.puerto[i][1];
 	}
 	return h;
 }
+
 void inicializar_servidor(int puerto) {
 	skr = inicializar(&canal_recepcion, puerto, TRUE, FALSE);
 	skw = inicializar(&canal_envio, 0, TRUE, TRUE);
 	inicializada = TRUE;
 }
+
 void assignPrivilege() {
 	if(holder == self 
 		&& !using 
@@ -146,6 +148,62 @@ void makeRequest() {
 	}
 }
 
+void saludo_inicial() {
+	struct msg mensaje;
+	int i, fromaux;
+	bool todos_los_mutexd_activos = FALSE;
+	bool servidor_activo[CANT_MUTEXD];
+
+	/* Envío un mensaje HELLO a todos los servidores */
+	printf("Enviando mensaje HELLO a los demás servidores mutexd...");
+	fflush(stdout);
+
+	mensaje.tipo = HELLO;
+	mensaje.from = self;
+
+	for (i=0; i < CANT_MUTEXD; i++) {
+		if (servidores.puerto[i][0] == self) {
+			servidor_activo[servidores.puerto[i][0] - 5001] = TRUE;
+			continue;
+		}
+
+		servidor_activo[servidores.puerto[i][0] - 5001] = FALSE;
+		send_msg(mensaje, servidores.puerto[i][0]);
+	}
+
+	printf(" ¡Listo!\n");
+	printf("Esperando respuesta de todos ellos antes de continuar...\n");
+	fflush(stdout);
+
+	/* Ahora espero las respuestas de los otros servidores */
+	while (!todos_los_mutexd_activos) {
+		receive_msg(&mensaje);
+
+		if (mensaje.tipo == HELLO && !servidor_activo[mensaje.from - 5001]) {
+			fromaux = mensaje.from;
+
+			servidor_activo[fromaux - 5001] = TRUE;
+			
+			mensaje.tipo = HELLO;
+			mensaje.from = self;
+			send_msg(mensaje, fromaux);
+
+			printf("   %d -> ¡activo!\n", fromaux);
+		}
+		else if (mensaje.tipo != HELLO) {
+			debug("ATENCION: Se recibió un mensaje distinto de HELLO\n");
+		}
+
+		for (i=0; i < CANT_MUTEXD; i++) {
+			if (servidor_activo[i] == FALSE)
+				break;
+		}
+
+		if (i == CANT_MUTEXD)
+			todos_los_mutexd_activos = TRUE;
+	}
+}
+
 int main(int argc, char* argv[]) {
 	int puerto;
 	colaServers = CreateQueue(7);
@@ -174,16 +232,20 @@ int main(int argc, char* argv[]) {
 	/* Inicializo las estructuras para la comunicación */
 	inicializar_servidor(puerto);
 
-	printf("Conexiones inicializadas\n\n");
+	printf("Conexiones inicializadas\n");
 
-	/* TODO: Espera de todos los servidores UP.
-	 * Posible implementacion: a las espera de 7 HELLO. Un simple contador */
+	/* Hago el saludo inicial antes de comenzar con el algoritmo */
+	saludo_inicial();
 
+	/* En este punto todos los servidores están activos */
+	printf("Todos los servidores están activos. Comienza a operar el algoritmo.\n\n");
+
+	/* Comienza el algoritmo */
 	while (TRUE) {
 		receive_msg(&mensaje);
 		
 		printf("------\n");
-		printf("Recibido un mensaje de %s\n", inet_ntoa(canal_recepcion.sin_addr));
+		printf("Recibido un mensaje de %s:%d\n", inet_ntoa(canal_recepcion.sin_addr), mensaje.from);
 		printf("Tipo del mensaje recibido: %s\n\n", nombre_mensajes[mensaje.tipo]);
 
 		if (mensaje.tipo == ENTRAR_RC) {
@@ -209,7 +271,7 @@ int main(int argc, char* argv[]) {
 			cliente = -1;
 		}
 		else if (mensaje.tipo == HELLO) {
-			/* No implementado aún */
+			debug("Mensaje HELLO ignorado");
 		}
 
 		assignPrivilege();

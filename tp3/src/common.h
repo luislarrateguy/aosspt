@@ -62,6 +62,7 @@ bool debugging;
 void fatal(string mensaje);
 void debug(string mensaje);
 int inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio);
+
 void send_msg(struct msg mensaje, int puerto_destino);
 void receive_msg(struct msg* mensaje);
 
