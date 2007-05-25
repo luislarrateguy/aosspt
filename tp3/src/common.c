@@ -4,8 +4,12 @@ void fatal(string mensaje) {
 	fprintf(stderr, "%s\n", mensaje);
 	exit(1);
 }
+void debug(string mensaje) {
+    if (debugging)
+    	fprintf(stdout, "%s\n", mensaje);   
+}
 
-void inicializar(struct sockaddr_in *canal, int puerto, bool any) {
+void inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
 	int b;
 	struct hostent* nombre_local = gethostbyname("localhost");
 
@@ -27,10 +31,12 @@ void inicializar(struct sockaddr_in *canal, int puerto, bool any) {
     	memcpy(&canal->sin_addr.s_addr, nombre_local->h_addr,
     		nombre_local->h_length);   
     }
-
-	b = bind(sock, (struct sockaddr*) canal,
-		sizeof(*canal));
-	if (b < 0) fatal("Error al ejecutar bind.");
+    
+    if (!envio) {
+    	b = bind(sock, (struct sockaddr*) canal,
+    		sizeof(*canal));
+    	if (b < 0) fatal("Error al ejecutar bind.");
+	}
 
 	len_canal = sizeof(*canal);
 

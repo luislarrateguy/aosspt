@@ -32,7 +32,11 @@
 
 int puertoServer;
 int puertoLocal;
-
+void inicializar_cliente(int puertoServer,int puertoLocal) {
+	inicializar(&canal_recepcion,puertoLocal,FALSE,FALSE);
+	inicializar(&canal_envio,puertoServer,FALSE,TRUE);
+	inicializada = TRUE;
+}
 void entrar_rc() {
     struct msg mensajeEntrar,mensaje;
 	mensajeEntrar.tipo = ENTRAR_RC;
@@ -63,8 +67,7 @@ int main(int argc, char* argv[]) {
 	puertoLocal  = puertoServer + 1000;
 
 	/* Inicializo las estructuras para la comunicación */
-	inicializar(&canal_envio,puertoServer,FALSE);
-	inicializar(&canal_recepcion,puertoLocal,FALSE);
+    inicializar_cliente(puertoServer,puertoLocal);
 	
 	while(TRUE)	{
 		printf("Estoy en la FUERA de la Región Crítica\n");
