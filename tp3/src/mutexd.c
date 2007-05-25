@@ -168,10 +168,11 @@ int main(int argc, char* argv[]) {
 	
 	fprintf(stderr,"Mi puerto: %d\n",self);
     fprintf(stderr,"El holder: %d\n",holder);
-
 	
 	/* Inicializo las estructuras para la comunicación */
 	inicializar_servidor(puerto);
+	
+	fprintf(stderr,"Conexiones inicializadas\n");
 
 	while (TRUE) {
 		receive_msg(&mensaje);
