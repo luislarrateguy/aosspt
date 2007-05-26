@@ -28,20 +28,21 @@
 
 #include "common.h"
 
-#define PUERTO_INICIAL 6001
-
 /* Variables globales del cliente */
 int puertoServer;
 int puertoLocal;
 
 void inicializar_cliente() {
-	skr = inicializar(&canal_recepcion,puertoLocal,FALSE,FALSE);
-	skw = inicializar(&canal_envio,puertoServer,FALSE,TRUE);
+	skr = inicializar(&canal_recepcion, puertoLocal, FALSE, FALSE);
+	skw = inicializar(&canal_envio, puertoServer, FALSE, TRUE);
 	inicializada = TRUE;
 }
 
 void entrar_rc() {
-	struct msg mensajeEntrar,mensaje;
+	if (!inicializada)
+		fatal("entrar_rc: conexión no inicializada aún.");
+
+	struct msg mensajeEntrar, mensaje;
 	mensajeEntrar.tipo = ENTRAR_RC;
 	mensajeEntrar.from = puertoLocal;
 	send_msg(mensajeEntrar, puertoServer);
@@ -54,6 +55,9 @@ void entrar_rc() {
 }
 
 void salir_rc() {
+	if (!inicializada)
+		fatal("salir_rc: conexión no inicializada aún.");
+
 	struct msg mensaje;
 	mensaje.tipo = SALIR_RC;
 	mensaje.from = puertoLocal;

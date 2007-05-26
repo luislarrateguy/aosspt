@@ -39,6 +39,10 @@
 #define SALIR_RC	3
 #define HELLO		4
 
+/* Array que contiene el nombre los mensajes. Así:
+ * nombre_mensajes[0] = "REQUEST"
+ * nombre_mensaje[4] = "HELLO".
+ * Es para el entendimiento de las salidas por consola. */
 char* nombre_mensajes[5];
 
 #define FALSE		0
@@ -47,16 +51,30 @@ char* nombre_mensajes[5];
 typedef char* string;
 typedef int bool;
 
+/* Estructura de mensaje. Es utilizada por el servidor y por el cliente para
+ * enviar un mensaje. El campo 'tipo' es uno de los nombrados arriba: REQUEST,
+ * ENTRAR_RC, etc. El campo 'from' lo utiliza el emisor para indicarle al
+ * receptor en qué puerto va a esperar la respuesta (si es que el mensaje
+ * emitido requiere una respuesta) */
 struct msg {
 	int tipo;
 	int from;
 };
 
+/* Sockets de lectura y escritura */
 int skr,skw;
+
+/* Canales utilizados para recibir y enviar información */
 struct sockaddr_in canal_recepcion;
 struct sockaddr_in canal_envio;
 socklen_t len_canal;
+
+/* Es utilizado por las funciones send_msg, receive_msg, entrar_rc y salir_rc
+ * para saber si todas las estructuras, variables y sockets necesarios han sido
+ * inicializados */
 bool inicializada;
+
+/* En caso de ser TRUE activa el debug por consola */
 bool debugging;
 
 void fatal(string mensaje);

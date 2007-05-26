@@ -21,16 +21,26 @@
 
 #include "common.h"
 
+/* Utilizada para mostrar por consola un mensaje de error fatal que causa la
+ * salida del programa */
 void fatal(string mensaje) {
 	fprintf(stderr, "%s\n", mensaje);
 	exit(1);
 }
 
+/* Utilizada, en caso de que el debugging esté activado, para mostrar mensajes
+ * de depuración por consola */
 void debug(string mensaje) {
 	if (debugging)
 		printf("%s\n", mensaje);   
 }
 
+/* Es utilizada por el cliente y por el servidor. Es una función genérica.
+ * Inicializa las estructuras de datos para que la comunicación sea posible
+ * (sockets, canales, etc), así como otras estructuras de datos.  Cada proceso,
+ * el cliente y el servidor, definen otra función: inicializar_cliente e
+ * inicializar_servidor respectivamente, que se encargan de llamar a ésta con
+ * los argumentos correctos */
 int inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
 	int b, sk;
 	struct hostent* nombre_local = gethostbyname("localhost");
@@ -53,22 +63,30 @@ int inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
    	canal->sin_family = AF_INET;
    	canal->sin_port = htons(puerto);
 
-	/* canal que puede recibir/enviar de cualquiera */
+	/* Si estamos inicializando una estructura sockaddr_in para recibir
+	 * datos, entonces puede recibirlos de cualquier origen */
 	if (!envio) {
 		canal->sin_addr.s_addr = htonl(INADDR_ANY);
 		b = bind(sk, (struct sockaddr*) canal,
 			sizeof(*canal));
 		if (b < 0) 
 			fatal("inicializar: Error al ejecutar bind.");
+
+	/* Si en cambios es para el envío, seteo la dirección IP de origen */
 	} else {
 		memcpy(&canal->sin_addr.s_addr, nombre_local->h_addr,
 		nombre_local->h_length);
 	}
 
 	len_canal = sizeof(*canal);
+
 	return sk;
 }
 
+/* Utilizada tanto por el cliente como por el servidor. Sólo hay que pasar la
+ * estructura que representa el mensaje a enviar y el puerto destino.  Si la
+ * recepción del datagrama falla, entonces se muestra un mensaje de error
+ * fatal. */
 void send_msg(struct msg mensaje, int puerto_destino) {
 	if (!inicializada)
 		fatal("send_msg: conexión no inicializada aún.");

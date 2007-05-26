@@ -26,22 +26,21 @@
 #define RUTA_MUTEX_CFG "../etc/mutex.cfg"
 #define CANT_MUTEXD 7
 
-/* Variables Globales a las funciones */
-int self,holder,cliente;
+/* Variables globales a las funciones */
+int self, holder, cliente;
 bool asked, using = FALSE;
 Queue colaServers;
 struct puertos servidores;
 
-/* Estructura utilizada para retornar la configuración
- * de puertos leída en la función 'leer_puertos'. En la
- * primer columna de la matriz está el puerto del mutex
- * y en la segunda el puerto del padre */
+/* Estructura utilizada para retornar la configuración de puertos leída en la
+ * función 'leer_puertos'. En la primer columna de la matriz está el puerto del
+ * mutex y en la segunda el puerto del padre */
 struct puertos {
 	int puerto[CANT_MUTEXD][2];
 };
 
-/* Retorna una estructura 'puertos' con el numero de puerto
- * de cada mutex y el de su padre, leidos del archivo 'mutex.cfg' */ 
+/* Retorna una estructura 'puertos' con el numero de puerto de cada mutex y el
+ * de su padre, leidos del archivo 'mutex.cfg' */ 
 void leer_puertos (struct puertos *resultado) {
 	FILE* archivo;
 	char linea[TAM_LINEA];
@@ -85,6 +84,8 @@ void leer_puertos (struct puertos *resultado) {
 		fatal("Error al cerrar el archivo\n");
 }
 
+/* Es utilizado luego de leer el archivo de configuración. Retorna el holder
+ * inicial el proceso mutexd actual. */
 int obtener_holder() {
 	/* Aca intento leer el puerto del holder */
 	leer_puertos(&servidores);
@@ -105,21 +106,36 @@ int obtener_holder() {
 	return h;
 }
 
+/* Se encarga de llamar a la función genérica 'inicializar' con los argumentos
+ * correctos para un proceso 'mutexd' */
 void inicializar_servidor(int puerto) {
 	skr = inicializar(&canal_recepcion, puerto, TRUE, FALSE);
 	skw = inicializar(&canal_envio, 0, TRUE, TRUE);
 	inicializada = TRUE;
 }
 
-void assignPrivilege() {
+/* Sólo actúa si el proceso actual posee ahora el token, si no lo está usando y
+ * si la cola de pedidos (colaServers) no está vacía.
+ * Báscicamente transfiere el token a otro servidor, o le da permiso de utilizar
+ * la región crítica a su cliente si éste se lo ha pedido */
+void assign_privilege() {
+	if (!inicializada)
+		fatal("assign_privilege: conexión no inicializada aún.");
+
 	if(holder == self 
 		&& !using 
 		&& !IsEmpty(colaServers) ) {
 
+		/* Creo el mensaje a enviar, común a todos los casos */
 		struct msg mensaje;
 		mensaje.tipo = PRIVILEGE;
 		mensaje.from = self;
 		
+		/* Mi nuevo holder será el que esté en la cabeza de la cola,
+		 * ya que en caso de ser alguien distinto a este proceso, le voy
+		 * a enviar el token y ciertamente será mi nuevo holder.
+		 * En caso de ser yo mismo, el control pasa sólo al cliente, y
+		 * yo sigo teniendo el token (holder = self). */
 		holder = FrontAndDequeue(colaServers);
 		asked = FALSE;
 
@@ -134,25 +150,47 @@ void assignPrivilege() {
 	}
 }
 
-void makeRequest() {
+/* Sólo actúa si el proceso actual no tiene ahora el token, si la cola no está
+ * vacía y si no ha enviado un mensaje REQUEST antes (asked = FALSE).
+ * Lo que hace 'make_request' es justamente pedir al holder actual el token */
+void make_request() {
+	if (!inicializada)
+		fatal("make_request: conexión no inicializada aún.");
+
 	if (holder != self
 		&& !IsEmpty(colaServers)
 		&& !asked) {
 		
 		debug("Haciendo un REQUEST por token");
+
+		/* Armo el mensaje de pedido (REQUEST) */
 		struct msg mensaje;
 		mensaje.tipo = REQUEST;
 		mensaje.from = self;
+
+		/* Envío el mensaje a mi holder y seteo la variable asked a TRUE,
+		 * para no volver a pedirle lo mismo */
 		send_msg(mensaje,holder);
 		asked = TRUE;
 	}
 }
 
+/* Se ejecuta antes de comenzar el algoritmo de Raymond. Se encarga de verificar que
+ * todos los demás servidores estén activos */
 void saludo_inicial() {
 	struct msg mensaje;
 	int i, fromaux;
+
+	/* Indica si todos los servidores están activos */
 	bool todos_los_mutexd_activos = FALSE;
+
+	/* Array de bools que indica qué servido está activo. Cuando
+	 * todos los elementos del mismo son TRUE, entonces
+	 * 'todos_los_mutexd_activos' también es TRUE */
 	bool servidor_activo[CANT_MUTEXD];
+
+	if (!inicializada)
+		fatal("saludo_inicial: conexión no inicializada aún.");
 
 	/* Envío un mensaje HELLO a todos los servidores */
 	printf("Enviando mensaje HELLO a los demás servidores mutexd...");
@@ -161,6 +199,9 @@ void saludo_inicial() {
 	mensaje.tipo = HELLO;
 	mensaje.from = self;
 
+	/* Envío a cada servidor un mensaje HELLO. Es probable que alguno de ellos
+	 * no se haya ejecutado aún, en ese caso no recibirá el mensaje obviamente.
+	 * En este bucle también se inicializa el array 'servidor_activo' a FALSE */
 	for (i=0; i < CANT_MUTEXD; i++) {
 		if (servidores.puerto[i][0] == self) {
 			servidor_activo[servidores.puerto[i][0] - 5001] = TRUE;
@@ -179,6 +220,9 @@ void saludo_inicial() {
 	while (!todos_los_mutexd_activos) {
 		receive_msg(&mensaje);
 
+		/* Si el mensaje es del tipo HELLO y no lo tenía como activo al servidor
+		 * emisor del mismo, entonces lo seteo como activo y le envío una
+		 * respuesta */
 		if (mensaje.tipo == HELLO && !servidor_activo[mensaje.from - 5001]) {
 			fromaux = mensaje.from;
 
@@ -190,10 +234,16 @@ void saludo_inicial() {
 
 			printf("   %d -> ¡activo!\n", fromaux);
 		}
+
+		/* Si se da la casualidad de que se ha recibido un mensaje distinto a HELLO
+		 * en la fase de inicialización, entonces algo anda mal */
 		else if (mensaje.tipo != HELLO) {
 			debug("ATENCION: Se recibió un mensaje distinto de HELLO\n");
 		}
 
+		/* El siguiente código simplemente verifica la condición para que
+		 * 'todos_los_mutexd_activos' sea TRUE y así salir del bucle y
+		 * finalizar la fase de saludo o inicialización */
 		for (i=0; i < CANT_MUTEXD; i++) {
 			if (servidor_activo[i] == FALSE)
 				break;
@@ -276,8 +326,8 @@ int main(int argc, char* argv[]) {
 			debug("Mensaje HELLO ignorado");
 		}
 
-		assignPrivilege();
-		makeRequest();
+		assign_privilege();
+		make_request();
 
 		printf("------\n\n");
 	}
