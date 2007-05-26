@@ -33,7 +33,7 @@ Queue colaServers;
 struct puertos servidores;
 
 /* Estructura utilizada para retornar la configuración
- * de puertos leída en la función 'leerPuertos'. En la
+ * de puertos leída en la función 'leer_puertos'. En la
  * primer columna de la matriz está el puerto del mutex
  * y en la segunda el puerto del padre */
 struct puertos {
@@ -42,7 +42,7 @@ struct puertos {
 
 /* Retorna una estructura 'puertos' con el numero de puerto
  * de cada mutex y el de su padre, leidos del archivo 'mutex.cfg' */ 
-void leerPuertos (struct puertos *resultado) {
+void leer_puertos (struct puertos *resultado) {
 	FILE* archivo;
 	char linea[TAM_LINEA];
 	char* puerto;
@@ -85,9 +85,9 @@ void leerPuertos (struct puertos *resultado) {
 		fatal("Error al cerrar el archivo\n");
 }
 
-int obtenerHolder() {
+int obtener_holder() {
 	/* Aca intento leer el puerto del holder */
-	leerPuertos(&servidores);
+	leer_puertos(&servidores);
 	int i = 0;
 	int h = -1;
 	
@@ -224,7 +224,7 @@ int main(int argc, char* argv[]) {
 	/* self no debería ser modificado nunca. Indica el puerto del servidor
 	 * actual */
 	self = puerto;
-	holder = obtenerHolder();
+	holder = obtener_holder();
 	
 	printf("Mi puerto: %d\n",self);
 	printf("El holder: %d\n",holder);
