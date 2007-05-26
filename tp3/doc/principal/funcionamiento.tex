@@ -27,12 +27,6 @@ El archivo de configuración tiene la siguiente estructura:
 
 \salida{../etc/mutex.cfg}
 
-\FIXME{Cuando lo encuentra, revisa si el valor correspondiente en la segunda columna
-es un número natural, correspondiente a un puerto, y de ser así sabe que a
-traves de ese puerto puede comunicarse con su \emph{holder}.
-Directamente al holder?. A self y holder les asigné el puerto, cosa e enviar directo
-el mensaje. Recuerden que solo debe enviarse al vecino}
-
 Cuando un proceso \proceso{mutexd} lee el archivo de configuración en busca de
 su \emph{holder}, utilizando \emph{numeroPuerto}, lo hace revisando la primer
 columna del mismo\footnote{Las columnas se separan con un espacio en blanco.}.
@@ -41,6 +35,9 @@ es un número natural, correspondiente a un puerto, y de ser así sabe que a
 traves de ese puerto puede comunicarse con su \emph{holder}, y también sabe que
 él no tiene el token actualmente. En cambio si el valor de la segunda columna es
 0 (cero), entonces ese servidor tendrá el token.
+
+En el archivo mostrado arriba, el servidor que escuchará en 5001 posee el token.
+El 5002 tiene como \emph{holder} a 5001, etc.
 
 
 % mutexloop
@@ -55,24 +52,40 @@ proceso \proceso{mutexd} correspondiente el permiso para entrar a la región
 crítica. Luego simplemente hace lo que tiene que hacer y sale de la misma,
 informándoselo al servidor.
 
+Un proceso \proceso{mutexloop} también escucha en un puerto. Cuando éste se
+comunica con el servidor, coloca en uno de los campos de la estructura del
+mensaje enviado el puerto que ha escogido para esperar una respuesta. El
+mismo corresponde a la siguiente fórmula: $puertoServidor + 1000$. O sea que
+mientras que los servidores escuchan en los puerto 5001\ldots5007, los clientes
+lo hacen en el rango 6001\ldots6007. Por supuesto que estos dos rangos deben
+estar libres en la máquina de pruebas.
+
 
 % Protocolo
 \subsubsection{Protocolo de comunicación}
 
 Los mensajes de comunicación son los siguientes:
 
-\TODO{Revisar si los mensajes son correctos.  Revisé. Cambié un nombre
-de acuerdo al código. Elijan el que les parezca más adecuado.}
 \begin{itemize}
 
-\item \textbf{REQUEST}: Es utilizado tanto por los servidores para el
-intercambio del token, como por los clientes hacia los servidores. Indica que
-el emisor desea obtener el token, para acceder (cliente) o dar permiso de
-acceder (servidor) a la región crítica.
+\item \textbf{HELLO}: Mensaje utilizado en la inicialización entre servidores.
+Cuando un servidor comienza, envía un mensaje de éste tipo a todos los demás
+servidores, y luego espera las respuestas de todos ellos. El algorimo comienza
+sólamente si el servidor sabe que todos los demás servidores están activos.
 
-Los servidores lo envían a su \emph{HOLDER} sólo en caso de no poseer el token,
-y los clientes lo envían a su correspondiente servidor cuando intentan acceder
-la región crítica.
+Al ejecutarse los procesos \proceso{mutexd}, se puede ver a medida que se
+corren los mismos, cómo éstos se van avisando entre ellos que están activos.
+Sin embargo el último en ejecutarse enviará un mensaje \emph{HELLO} de más a
+los otros procesos. Esto es así porque al recibir un mensaje \emph{HELLO} de un
+emisor, el receptor contesta con otro mensaje \emph{HELLO} (Ver más detalles en
+la sección \ref{sec:servidor}, función \metodo{saludo\_inicial}). Este es un
+detalle simplemente, el algorimo de inicialización funciona correctamente.
+
+\item \textbf{REQUEST}: Es utilizado por los servidores para pedir por el token
+a su \emph{holder}. Indica que el proceso \proceso{mutexd} emisor desea obtener
+el token para dar permiso de acceder a la región crítica a su cliente.
+
+Los servidores lo envían a su \emph{HOLDER} sólo en caso de no poseer el token.
 
 \item \textbf{PRIVILEGE}: Sólamente puede enviarlo un servidor que tenga el
 token, pero el destinatario puede ser un cliente como otro servidor. La
@@ -83,12 +96,12 @@ servidor \textsl{j}. Tercero, que luego de recibido el mensaje, el servidor
 \textsl{j} será el que actualmente tenga el token, y cuarto, el \emph{HOLDER}
 del servidor \textsl{i} será \textsl{j}.
 
-\item \textbf{SALIR\_RC}: Es utilizado únicamente por el cliente, y esta siempre
-dirigido a su correspondiente servidor. Sirve para indicarle que ha terminado
-de trabajar sobre la región crítica y desea liberar.
-
-\item \textbf{ENTRAR\_RC}: Unicamente utilizado por el clietne para pedir
+\item \textbf{ENTRAR\_RC}: Unicamente utilizado por el cliente para pedir
 acceso exclusivo a la región crítica.
+
+\item \textbf{SALIR\_RC}: Es utilizado únicamente por el cliente, y está
+siempre dirigido a su correspondiente servidor. Sirve para indicarle que ha
+terminado de trabajar sobre la región crítica y desea liberarla.
 
 \end{itemize}
 

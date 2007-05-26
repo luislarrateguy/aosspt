@@ -238,14 +238,16 @@ int main(int argc, char* argv[]) {
 	saludo_inicial();
 
 	/* En este punto todos los servidores están activos */
-	printf("Todos los servidores están activos. Comienza a operar el algoritmo.\n\n");
+	printf("Todos los servidores están activos.");
+	printf("Comienza a operar el algoritmo.\n\n");
 
 	/* Comienza el algoritmo */
 	while (TRUE) {
 		receive_msg(&mensaje);
 		
 		printf("------\n");
-		printf("Recibido un mensaje de %s:%d\n", inet_ntoa(canal_recepcion.sin_addr), mensaje.from);
+		printf("Recibido un mensaje de %s:%d\n",
+			inet_ntoa(canal_recepcion.sin_addr), mensaje.from);
 		printf("Tipo del mensaje recibido: %s\n\n", nombre_mensajes[mensaje.tipo]);
 
 		if (mensaje.tipo == ENTRAR_RC) {
@@ -257,7 +259,7 @@ int main(int argc, char* argv[]) {
 			if (!using)
 				debug("Pide un vecino el TOKEN");
 			else
-				debug("Pide un vecino el TOKEN, pero lo estoy usando. Tiene que esperar");
+				debug("Pide un vecino el TOKEN, pero lo estoy usando.");
 
 			Enqueue(mensaje.from,colaServers);
 		}

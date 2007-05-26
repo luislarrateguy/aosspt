@@ -48,6 +48,9 @@ void entrar_rc() {
 	
 	/* Se bloquea hasta que reciba el msg */
 	receive_msg(&mensaje);
+
+	if (mensaje.tipo != PRIVILEGE)
+		fatal("entrar_rc: Respuesta incorrecta");
 }
 
 void salir_rc() {
