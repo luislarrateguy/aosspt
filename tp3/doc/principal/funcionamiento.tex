@@ -35,7 +35,7 @@ su \emph{holder}, utilizando \emph{numeroPuerto}, lo hace revisando la primer
 columna del mismo\footnote{Las columnas se separan con un espacio en blanco.}.
 Cuando lo encuentra, revisa si el valor correspondiente en la segunda columna
 es un número natural, correspondiente a un puerto, y de ser así sabe que a
-traves de ese puerto puede comunicarse con su \emph{holder}, y también sabe que
+través de ese puerto puede comunicarse con su \emph{holder}, y también sabe que
 él no tiene el token actualmente. En cambio si el valor de la segunda columna es
 0 (cero), entonces ese servidor tendrá el token.
 
@@ -53,7 +53,7 @@ Un proceso \proceso{mutexloop} se ejecuta de la siguiente forma:
 \emph{puertoServidor} le indica en qué puerto debe conectarse para pedirle a su
 proceso \proceso{mutexd} correspondiente el permiso para entrar a la región
 crítica. Luego simplemente hace lo que tiene que hacer y sale de la misma,
-informándoselo al servidor.
+informándolo al servidor.
 
 Un proceso \proceso{mutexloop} también escucha en un puerto. Cuando éste se
 comunica con el servidor, coloca en uno de los campos de la estructura del
@@ -73,8 +73,8 @@ Los mensajes de comunicación son los siguientes:
 
 \item \textbf{HELLO}: Mensaje utilizado en la inicialización entre servidores.
 Cuando un servidor comienza, envía un mensaje de éste tipo a todos los demás
-servidores, y luego espera las respuestas de todos ellos. El algorimo comienza
-sólamente si el servidor sabe que todos los demás servidores están activos.
+servidores, y luego espera las respuestas de todos ellos. El algoritmo comienza
+solamente si el servidor sabe que todos los demás servidores están activos.
 
 Al ejecutarse los procesos \proceso{mutexd}, se puede ver a medida que se
 corren los mismos, cómo éstos se van avisando entre ellos que están activos.
@@ -82,7 +82,7 @@ Sin embargo el último en ejecutarse enviará un mensaje \emph{HELLO} de más a
 los otros procesos. Esto es así porque al recibir un mensaje \emph{HELLO} de un
 emisor, el receptor contesta con otro mensaje \emph{HELLO} (Ver más detalles en
 la sección \ref{sec:servidor}, función \metodo{saludo\_inicial}). Este es un
-detalle simplemente, el algorimo de inicialización funciona correctamente.
+detalle simplemente, el algoritmo de inicialización funciona correctamente.
 
 \item \textbf{REQUEST}: Es utilizado por los servidores para pedir por el token
 a su \emph{holder}. Indica que el proceso \proceso{mutexd} emisor desea obtener
@@ -90,7 +90,7 @@ el token para dar permiso de acceder a la región crítica a su cliente.
 
 Los servidores lo envían a su \emph{HOLDER} sólo en caso de no poseer el token.
 
-\item \textbf{PRIVILEGE}: Sólamente puede enviarlo un servidor que tenga el
+\item \textbf{PRIVILEGE}: Solamente puede enviarlo un servidor que tenga el
 token, pero el destinatario puede ser un cliente como otro servidor. La
 transferencia de un servidor \textsl{i} a uno \textsl{j} de este mensaje
 implica, primero, que el servidor \textsl{i} posee actualmente el token.
@@ -99,7 +99,7 @@ servidor \textsl{j}. Tercero, que luego de recibido el mensaje, el servidor
 \textsl{j} será el que actualmente tenga el token, y cuarto, el \emph{HOLDER}
 del servidor \textsl{i} será \textsl{j}.
 
-\item \textbf{ENTRAR\_RC}: Unicamente utilizado por el cliente para pedir
+\item \textbf{ENTRAR\_RC}: Únicamente utilizado por el cliente para pedir
 acceso exclusivo a la región crítica.
 
 \item \textbf{SALIR\_RC}: Es utilizado únicamente por el cliente, y está
