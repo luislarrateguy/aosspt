@@ -265,7 +265,8 @@ int main(int argc, char* argv[]) {
 	inicializada = FALSE;
 
 	puerto = atoi(argv[1]);
-	/* Hacer volar si no vamos a usar el debugging */
+
+	/* Detecto si el usuario a activado el debugging */
 	if ((argc == 3) && (atoi(argv[2]) == 0))
 		debugging = FALSE;
 	else 
@@ -276,8 +277,8 @@ int main(int argc, char* argv[]) {
 	self = puerto;
 	holder = obtener_holder();
 	
-	printf("Mi puerto: %d\n",self);
-	printf("El holder: %d\n",holder);
+	printf("Mi puerto: %d\n", self);
+	printf("El holder: %d\n", holder);
 	
 	/* Inicializo las estructuras para la comunicación */
 	inicializar_servidor(puerto);
@@ -289,10 +290,11 @@ int main(int argc, char* argv[]) {
 
 	/* En este punto todos los servidores están activos */
 	printf("Todos los servidores están activos.");
-	printf("Comienza a operar el algoritmo.\n\n");
+	printf(" Comienza a operar el algoritmo.\n\n");
 
 	/* Comienza el algoritmo */
 	while (TRUE) {
+		/* Me quedo esperando un mensaje de alguien */
 		receive_msg(&mensaje);
 		
 		printf("------\n");
@@ -300,10 +302,18 @@ int main(int argc, char* argv[]) {
 			inet_ntoa(canal_recepcion.sin_addr), mensaje.from);
 		printf("Tipo del mensaje recibido: %s\n\n", nombre_mensajes[mensaje.tipo]);
 
+		/* Detecto el tipo de mensaje recibido y actúo según eso */
 		if (mensaje.tipo == ENTRAR_RC) {
 			debug("Pide entrar en la region crítica mi cliente");
+
+			/* Guardo en la variable 'cliente' el puerto del cliente. Como
+			 * sólo puede haber un cliente por servidor, este mecanismo
+			 * funciona */
 			cliente = mensaje.from;
-			Enqueue(self,colaServers);
+
+			/* Como el mensaje es 'ENTRAR_RC' me encolo a mí mismo
+			 * en la estructura de cola. */
+			Enqueue(self, colaServers);
 		}
 		else if (mensaje.tipo == REQUEST) {
 			if (!using)
@@ -311,18 +321,30 @@ int main(int argc, char* argv[]) {
 			else
 				debug("Pide un vecino el TOKEN, pero lo estoy usando.");
 
-			Enqueue(mensaje.from,colaServers);
+			/* Encolo al servidor que me ha pedido el token */
+			Enqueue(mensaje.from, colaServers);
 		}
 		else if (mensaje.tipo == PRIVILEGE) {
 			debug("Me ha llegado un TOKEN");
+
+			/* Si recibí un mensaje del tipo 'PRIVILEGE' entonces
+			 * ahora yo soy el que tiene el token */
 			holder = self;
 		}
 		else if (mensaje.tipo == SALIR_RC) {
 	   		debug("El cliente libero la region crítica");
+
+			/* El cliente deja la región crítica, por lo tanto ya
+			 * no la estoy usando más */
 			using = FALSE;
 			cliente = -1;
 		}
 		else if (mensaje.tipo == HELLO) {
+			/* En esta etapa del algorimo un mensaje HELLO no tiene
+			 * sentido, lo ignoro. Sin embargo debido al algorimo
+			 * de saludo inicial, el último servidor en ejecutarse
+			 * hace que los demás reciban un mensaje de éste tipo
+			 * aquí, pero no afecta al funcionamiento */
 			debug("Mensaje HELLO ignorado");
 		}
 
@@ -333,6 +355,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	DisposeQueue(colaServers);
-	/* TODO: cerrar los sockets skw skr */
+
+	finalizar_conexiones();
 }
 

@@ -32,12 +32,15 @@
 int puertoServer;
 int puertoLocal;
 
+/* Se encarga de llamar a la función genérica 'inicializar' con los argumentos
+ * correctos para un proceso 'mutexloop' */
 void inicializar_cliente() {
 	skr = inicializar(&canal_recepcion, puertoLocal, FALSE, FALSE);
 	skw = inicializar(&canal_envio, puertoServer, FALSE, TRUE);
 	inicializada = TRUE;
 }
 
+/* Entra a la región crítica. Es bloqueante obviamente */
 void entrar_rc() {
 	if (!inicializada)
 		fatal("entrar_rc: conexión no inicializada aún.");
@@ -45,6 +48,7 @@ void entrar_rc() {
 	struct msg mensajeEntrar, mensaje;
 	mensajeEntrar.tipo = ENTRAR_RC;
 	mensajeEntrar.from = puertoLocal;
+
 	send_msg(mensajeEntrar, puertoServer);
 	
 	/* Se bloquea hasta que reciba el msg */
@@ -54,6 +58,7 @@ void entrar_rc() {
 		fatal("entrar_rc: Respuesta incorrecta");
 }
 
+/* Libera la región crítica. Obviamente, no es bloqueante */
 void salir_rc() {
 	if (!inicializada)
 		fatal("salir_rc: conexión no inicializada aún.");
@@ -61,6 +66,7 @@ void salir_rc() {
 	struct msg mensaje;
 	mensaje.tipo = SALIR_RC;
 	mensaje.from = puertoLocal;
+
 	send_msg(mensaje, puertoServer);
 }
 
@@ -99,7 +105,7 @@ int main(int argc, char* argv[]) {
 		salir_rc();
 	}
 
-	/* TODO: cerrar los sockets */
+	finalizar_conexiones();
 
 	return 0;
 }

@@ -83,6 +83,12 @@ int inicializar(struct sockaddr_in *canal, int puerto, bool any, bool envio) {
 	return sk;
 }
 
+/* Simplemente cierra los sockets abiertos */
+void finalizar_conexiones() {
+	close(skr);
+	close(skw);
+}
+
 /* Utilizada tanto por el cliente como por el servidor. Sólo hay que pasar la
  * estructura que representa el mensaje a enviar y el puerto destino.  Si la
  * recepción del datagrama falla, entonces se muestra un mensaje de error
