@@ -42,6 +42,12 @@ través de ese puerto puede comunicarse con su \emph{holder}, y también sabe qu
 En el archivo mostrado arriba, el servidor que escuchará en 5001 posee el token.
 El 5002 tiene como \emph{holder} a 5001, etc.
 
+Por defecto nuestro código busca el archivo \archivo{../etc/mutex.cfg} y no
+\archivo{/etc/mutex.cfg}. Esto es así porque el formato del mismo no es igual
+al que se propone en el enunciado. Si se desea cambiarlo simplemente hay que
+abrir el archivo \archivo{src/mutexd.c} y cambiar la constante
+\variable{RUTA\_MUTEX\_CFG} por el valor deseado.
+
 
 % mutexloop
 \subsubsection{\proceso{mutexloop}}
