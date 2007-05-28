@@ -22,6 +22,14 @@ recibe un mensaje \emph{HELLO} marca al emisor del mismo como activo. Ningún
 servidor comienza su algoritmo hasta que no tenga marcados a todos los demás
 servidores como activos.
 
+Por cuestiones de simplificación de la implementación, y dado que los servidores
+van a correr en la misma máquina, cada uno es identificado por su numero de
+puerto. Es decir que cuando son encolados como interesados en recibir el 
+privilegio, lo que se agrega en la cola es el numero de puerto que utilizan para
+reicbir los mensajes. Esto podría ser modificado para que utilice algun codigo
+hash de identificación o bien algún otro mecanismo que permita lograr el fin. 
+Ej: hash("ip:puerto")
+
 
 % /etc/mutex.cfg
 \subsubsection{Archivo de configuración \archivo{/etc/mutex.cfg}}
