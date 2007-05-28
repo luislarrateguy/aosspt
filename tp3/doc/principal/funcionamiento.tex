@@ -42,10 +42,10 @@ través de ese puerto puede comunicarse con su \emph{holder}, y también sabe qu
 En el archivo mostrado arriba, el servidor que escuchará en 5001 posee el token.
 El 5002 tiene como \emph{holder} a 5001, etc.
 
-Por defecto nuestro código busca el archivo \archivo{../etc/mutex.cfg} y no
-\archivo{/etc/mutex.cfg}. Esto es así porque el formato del mismo no es igual
-al que se propone en el enunciado. Si se desea cambiarlo simplemente hay que
-abrir el archivo \archivo{src/mutexd.c} y cambiar la constante
+Por defecto nuestro código busca el archivo \archivo{mutex.cfg} 
+\archivo{../etc/} y no \archivo{/etc/}. Esto es así porque el formato del mismo 
+no es igual al que se propone en el enunciado. Si se desea cambiarlo simplemente 
+hay que abrir el archivo \archivo{src/mutexd.c} y cambiar la constante
 \variable{RUTA\_MUTEX\_CFG} por el valor deseado.
 
 
@@ -67,11 +67,18 @@ mensaje enviado el puerto que ha escogido para esperar una respuesta. El
 mismo corresponde a la siguiente fórmula: $puertoServidor + 1000$. O sea que
 mientras que los servidores escuchan en los puertos 5001\ldots5007, los clientes
 lo hacen en el rango 6001\ldots6007. Por supuesto que estos dos rangos deben
-estar libres en la máquina de pruebas.
+estar libres en la máquina de pruebas. La decisión de utilizar de esta forma el 
+puerto escucha en el cliente tiene el fin de tratar los mensajes de una forma
+uniforme en el servidor. Ver más detalles en el protocolo de comunicación.
 
 
 % Protocolo
 \subsubsection{Protocolo de comunicación}
+
+Un mensaje de comunicación envía una estructura llamada \codigo{msg}, la cual
+incluyo un TIPO de mensaje (definido debajo) y un FROM que indica el puerto a
+donde el emisor espera una respuesta. Este puerto permite identificar quien está
+enviando el mensaje.
 
 Los mensajes de comunicación son los siguientes:
 
@@ -106,7 +113,8 @@ servidor \textsl{j}. Tercero, que luego de recibido el mensaje, el servidor
 del servidor \textsl{i} será \textsl{j}.
 
 \item \textbf{ENTRAR\_RC}: Únicamente utilizado por el cliente para pedir
-acceso exclusivo a la región crítica.
+acceso exclusivo a la región crítica. El efecto de este mensaje es hacer que el 
+propio servidor \emph{mutexd} se encole como interesado en el \emph{TOKEN}.
 
 \item \textbf{SALIR\_RC}: Es utilizado únicamente por el cliente, y está
 siempre dirigido a su correspondiente servidor. Sirve para indicarle que ha
