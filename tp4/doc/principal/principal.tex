@@ -1,60 +1,119 @@
 \section{Principal}
 
+% RTLinux
+\subsection{Características de la máquina con RTLinux}
 
-\subsection{Características del Hardware utilizado para la prueba}
+\subsubsection{Hardware}
 \begin{itemize}
-\item \textbf{CPU:} cpu
-\item \textbf{RAM:} ram
-\item \textbf{... algo mas?}
+\item \textbf{CPU:} AMD Athlon XP 2166 MHz
+\item \textbf{RAM:} 768 MB
 \end{itemize}
 
-\subsection{Versiones del Software Utilizado}
+\subsubsection{Software}
+\begin{itemize}
+\item \textbf{Sistema operativo:} Debian 3.0
+\item \textbf{Versión de RTLinux:} 3.1
+\end{itemize}
 
-\subsection{Listado de los programas utilizados para los 2 sistemas operativos}
+\subsubsection{Listado de los programas utilizados}
+\TODO{Falta. ¿Qué iría?}
 
-\section{Resultados completos de las mediciones}
 
+% Minix4RT
+\subsection{Características de la máquina con Minix4RT}
+
+\subsubsection{Hardware}
+\begin{itemize}
+\item \textbf{Modelo:} Notebook IBM ThinkPad 370C
+\item \textbf{CPU:} 486
+\item \textbf{RAM:} 8 MB
+\end{itemize}
+
+\subsubsection{Software}
+\begin{itemize}
+\item \textbf{Sistema operativo:} Minix \TODO{Versión de minix?}
+\end{itemize}
+
+\subsubsection{Listado de los programas utilizados}
+\TODO{Falta. ¿Qué iría?}
+
+
+% Resultado de las mediciones
+\subsection{Resultados completos de las mediciones}
+Los resultados completos de las mediciones se pueden encontrar en la planilla
+de OpenOffice Calc (o Excel, se incluyen ambos formatos).
+
+
+% Tablas de resumen
 \subsection{Tablas de resumen de los resultados}
 
-
-\subsection{Medición de latencia de interrupciones del sistema Monitor}
+\TODO{Ver si estan bien los deadlines. Creo que son todos cero, no?}
+\subsubsection{Medición de latencia de interrupciones del sistema Monitor}
+\begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
 &\multicolumn{3}{|c|}{FRECUENCIAS}\\
 \hline
-&10000&5000&1000\\
+&1000&2000&5000\\
 \hline
-MEDIA&&&\\
+MEDIA&999996,61&499998,66&199999,17\\
 \hline
-STD&&&\\
+STD&1079,02&1702,82&2229,71\\
 \hline
-MIN&&&\\
+MIN&987424&486880&186624\\
 \hline
-MAX&&&\\
+MAX&1012000&513184&213152\\
 \hline
-DEADLINES&&&\\
-\hline
-\end{tabular}
-
-
-\subsection{Medición de puntualidad de MINIX4RT}
-\begin{tabular}{|c|c|c|c|c|c|c|}
-\hline
-&\multicolumn{3}{|c|}{EN VACIO}&\multicolumn{3}{|c|}{CON CARGA}\\
-\hline
-&10000&5000&1000&10000&5000&1000\\
-\hline
-MEDIA&&&&&&\\
-\hline
-STD&&&&&&\\
-\hline
-MIN&&&&&&\\
-\hline
-MAX&&&&&&\\
-\hline
-DEADLINES&&&&&&\\
+DEADLINES&0&0&0\\
 \hline
 \end{tabular}
+\end{center}
 
+
+\subsubsection{Medición de puntualidad de MINIX4RT}
+
+\TODO{Ver si estan bien los deadlines. Creo que son todos cero, no?}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+&\multicolumn{3}{|c|}{EN VACIO}\\
+\hline
+&1000&2000&5000\\
+\hline
+MEDIA&999102.53&499566.27&199488.06\\
+\hline
+STD&14372.60&2791.26&3314.72\\
+\hline
+MIN&771840&485440&178144\\
+\hline
+MAX&1218144&518048&212544\\
+\hline
+DEADLINES&0&0&0\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+&\multicolumn{3}{|c|}{CON CARGA}\\
+\hline
+&1000&2000&5000\\
+\hline
+MEDIA&999122.11&499548.29&199408.83\\
+\hline
+STD&10896.38&12700.67&5012.85\\
+\hline
+MIN&862976&311456&157696\\
+\hline
+MAX&1136064&688192&236320\\
+\hline
+DEADLINES&0&0&0\\
+\hline
+
+\end{tabular}
+\end{center}
+
+% Gráficas
 \subsection{Gráficos de los resultados}
 
