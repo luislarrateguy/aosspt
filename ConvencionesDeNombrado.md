@@ -1,0 +1,12 @@
+# Issues #
+
+Los issues son los tickets de Trac.
+
+El campo **Summary** de los mismos se forma como: `SeccionPrincipal :: Subsección :: Título`. Por ejemplo: _mutexd :: documentación :: Escribir más detalladamente cómo realiza el envío_
+
+Ser consistentes con los nombres.
+
+Secciones principales posibles, con sus subsecciones (completar):
+  * mutexloop
+  * mutexd
+    * Lectura de archivos
